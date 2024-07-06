@@ -63,7 +63,7 @@ This project aims to develop a raw material inventory system to optimize invento
 ### Backend
 
 - Node.js
-- Microsoft SQL Server
+- MySQL
 
 ## Cloud Hosting
 
