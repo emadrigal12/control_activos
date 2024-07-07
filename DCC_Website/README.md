@@ -31,7 +31,6 @@
 ### Resources
 
 - [Live Demo](https://demos.creative-tim.com/vision-ui-dashboard-chakra)
-- [Buy Vision UI Dashboard](https://www.creative-tim.com/product/vision-ui-dashboard-chakra)
 - [License Agreement](https://www.creative-tim.com/license)
 - [Support and Issues](https://github.com/creativetimofficial/vision-ui-dashboard-chakra/issues)
 

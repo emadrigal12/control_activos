@@ -3,7 +3,7 @@ export const bgAuth = {
     global: (props) => ({
       body: {
         bg:
-          "linear-gradient(159.02deg, #0F123B 14.25%, #090D2E 56.45%, #020515 86.14%)",
+          "linear-gradient(159.02deg, #FFA500 14.25%, #FF8C00 56.45%, #FF4500 86.14%)",
 
         bgSize: "cover",
         bgPosition: "center center",

@@ -29,7 +29,7 @@ export const buttonStyles = {
           bg: "brand.200",
           color: "#fff",
           _hover: {
-            bg: "brand.300",
+            bg: "brand.400",
           },
           _active: {
             bg: "brand.400",
