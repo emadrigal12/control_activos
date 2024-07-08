@@ -34,11 +34,11 @@ export default function Pages(props) {
   document.documentElement.dir = "ltr";
 
   return (
-    <ChakraProvider theme={theme} resetCss={false} w='100%'>
-      <Box w='100%'>
+    <ChakraProvider theme={theme} resetCss={false} w="100%">
+      <Box w="100%">
         <Switch>
           {getRoutes(routes)}
-          <Redirect from='/auth' to='/auth/login-page' />
+          <Redirect from="/auth" to="/auth/login-page" />
         </Switch>
       </Box>
     </ChakraProvider>

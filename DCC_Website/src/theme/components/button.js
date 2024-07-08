@@ -26,10 +26,10 @@ export const buttonStyles = {
           },
         },
         brand: {
-          bg: "brand.200",
+          bg: "brand.400",
           color: "#fff",
           _hover: {
-            bg: "brand.400",
+            bg: "brand.500",
           },
           _active: {
             bg: "brand.400",

@@ -1,7 +1,6 @@
 // Chakra imports
 import { ChakraProvider, Portal, useDisclosure } from "@chakra-ui/react";
 import Configurator from "components/Configurator/Configurator";
-import Footer from "components/Footer/Footer.js";
 // Layout components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
@@ -99,7 +98,7 @@ export default function Dashboard(props) {
       <Sidebar
         routes={routes}
         logoText={"VISION UI FREE"}
-        display='none'
+        display="none"
         sidebarVariant={sidebarVariant}
         {...rest}
       />
@@ -108,7 +107,8 @@ export default function Dashboard(props) {
         w={{
           base: "100%",
           xl: "calc(100% - 275px)",
-        }}>
+        }}
+      >
         <Portal>
           <AdminNavbar
             onOpen={onOpen}
@@ -124,12 +124,11 @@ export default function Dashboard(props) {
             <PanelContainer>
               <Switch>
                 {getRoutes(routes)}
-                <Redirect from='/admin' to='/admin/dashboard' />
+                <Redirect from="/admin" to="/admin/dashboard" />
               </Switch>
             </PanelContainer>
           </PanelContent>
         ) : null}
-        <Footer />
         <Portal>
           <FixedPlugin
             secondary={getActiveNavbar(routes)}

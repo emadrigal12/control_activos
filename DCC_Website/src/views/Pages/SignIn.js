@@ -96,7 +96,7 @@ function SignIn() {
               >
                 <Input
                   color="white"
-                  bg="rgb(255, 115, 54)"
+                  bg="rgb(102, 31, 0)"
                   border="transparent"
                   borderRadius="20px"
                   fontSize="sm"
@@ -140,7 +140,7 @@ function SignIn() {
               >
                 <Input
                   color="white"
-                  bg="rgb(255, 115, 54)"
+                  bg="rgb(102, 31, 0)"
                   border="transparent"
                   borderRadius="20px"
                   fontSize="sm"
