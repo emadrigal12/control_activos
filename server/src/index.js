@@ -1,6 +1,6 @@
 const express = require("express");
 const morgan = require("morgan")
-
+const routes = require('../src/api/endpoints')
 
 //Configuracion inicial
 const app = express();
@@ -9,6 +9,7 @@ app.listen(app.get("port"))
 console.log("Escuchando comunicaciones en el puerto: " + app.get("port"))
 
 //Middlewares
+app.use('/', routes)
 app.use(morgan("dev"))
 
 
