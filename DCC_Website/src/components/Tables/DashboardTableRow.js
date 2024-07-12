@@ -18,50 +18,52 @@ function DashboardTableRow(props) {
     <Tr>
       <Td
         minWidth={{ sm: "250px" }}
-        ps='0px'
-        borderBottomColor='#56577A'
-        border={lastItem ? "none" : null}>
-        <Flex align='center' py='.8rem' minWidth='100%' flexWrap='nowrap'>
-          <Icon as={logo} h={"24px"} w={"24px"} me='18px' />
-          <Text fontSize='sm' color='#fff' fontWeight='normal' minWidth='100%'>
+        ps="0px"
+        borderBottomColor="#56577A"
+        border={lastItem ? "none" : null}
+      >
+        <Flex align="center" py=".8rem" minWidth="100%" flexWrap="nowrap">
+          <Icon as={logo} h={"24px"} w={"24px"} me="18px" />
+          <Text fontSize="sm" color="#fff" fontWeight="normal" minWidth="100%">
             {name}
           </Text>
         </Flex>
       </Td>
 
-      <Td borderBottomColor='#56577A' border={lastItem ? "none" : null}>
-        <AvatarGroup size='xs' showBorder={false}>
+      <Td borderBottomColor="#56577A" border={lastItem ? "none" : null}>
+        <AvatarGroup size="xs" showBorder={false}>
           {members.map((member) => {
             return (
               <Avatar
-                name='Ryan Florence'
+                name="Ryan Florence"
                 src={member}
                 showBorder={false}
-                border='none'
+                border="none"
                 _hover={{ zIndex: "3", cursor: "pointer" }}
               />
             );
           })}
         </AvatarGroup>
       </Td>
-      <Td borderBottomColor='#56577A' border={lastItem ? "none" : null}>
-        <Text fontSize='sm' color='#fff' fontWeight='bold' pb='.5rem'>
+      <Td borderBottomColor="#56577A" border={lastItem ? "none" : null}>
+        <Text fontSize="sm" color="#fff" fontWeight="bold" pb=".5rem">
           {budget}
         </Text>
       </Td>
-      <Td borderBottomColor='#56577A' border={lastItem ? "none" : null}>
-        <Flex direction='column'>
+      <Td borderBottomColor="#56577A" border={lastItem ? "none" : null}>
+        <Flex direction="column">
           <Text
-            fontSize='sm'
-            color='#fff'
-            fontWeight='bold'
-            pb='.2rem'>{`${progression}%`}</Text>
+            fontSize="sm"
+            color="#fff"
+            fontWeight="bold"
+            pb=".2rem"
+          >{`${progression}%`}</Text>
           <Progress
-            colorScheme='brand'
-            h='3px'
-            bg='#2D2E5F'
+            colorScheme="brand"
+            h="3px"
+            bg="#681D08"
             value={progression}
-            borderRadius='30px'
+            borderRadius="30px"
           />
         </Flex>
       </Td>

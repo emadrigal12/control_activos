@@ -1,4 +1,3 @@
-import React from "react";
 // Chakra imports
 import {
   Box,
@@ -8,196 +7,251 @@ import {
   FormLabel,
   Heading,
   Input,
-  Link,
-  Switch,
   Text,
-  DarkMode,
+  Image,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
 } from "@chakra-ui/react";
 
 // Assets
-import signInImage from "assets/img/signInImage.png";
+import signInImage from "assets/img/signInImage.jpg";
+import logo from "assets/img/logo-no-text.png";
 
 // Custom Components
-import AuthFooter from "components/Footer/AuthFooter";
 import GradientBorder from "components/GradientBorder/GradientBorder";
 
+// Custom hooks
+import useSignIn from "hooks/useSignIn";
+
 function SignIn() {
+  // Sign In form values
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    emailError,
+    passwordError,
+    generalError,
+    handleSignIn,
+  } = useSignIn();
+
   const titleColor = "white";
-  const textColor = "gray.400";
 
   return (
-    <Flex position='relative'>
+    <Flex position="relative">
       <Flex
-        minH='100vh'
+        minH="100vh"
         h={{ base: "120vh", lg: "fit-content" }}
-        w='100%'
-        maxW='1044px'
-        mx='auto'
+        w="100%"
+        maxW="1044px"
+        mx="auto"
         pt={{ sm: "100px", md: "0px" }}
-        flexDirection='column'
-        me={{ base: "auto", lg: "50px", xl: "auto" }}>
+        flexDirection="column"
+        me={{ base: "auto", lg: "50px", xl: "auto" }}
+      >
         <Flex
-          alignItems='center'
-          justifyContent='start'
+          alignItems="center"
+          justifyContent="start"
           style={{ userSelect: "none" }}
           mx={{ base: "auto", lg: "unset" }}
           ms={{ base: "auto", lg: "auto" }}
           w={{ base: "100%", md: "50%", lg: "450px" }}
-          px='50px'>
+          px="50px"
+        >
           <Flex
-            direction='column'
-            w='100%'
-            background='transparent'
+            direction="column"
+            w="100%"
+            background="transparent"
             mt={{ base: "50px", md: "150px", lg: "160px", xl: "245px" }}
-            mb={{ base: "60px", lg: "95px" }}>
-            <Heading color={titleColor} fontSize='32px' mb='10px'>
-              Nice to see you!
+            mb={{ base: "60px", lg: "95px" }}
+          >
+            <Heading color={titleColor} fontSize="36px" mb="10px">
+              Bienvenido!
             </Heading>
             <Text
-              mb='36px'
-              ms='4px'
-              color={textColor}
-              fontWeight='bold'
-              fontSize='14px'>
-              Enter your email and password to sign in
+              mb="36px"
+              ms="4px"
+              color="white"
+              fontWeight="normal"
+              fontSize="14px"
+            >
+              Ingresa tu correo y contraseña para acceder a tu cuenta.
             </Text>
             <FormControl>
               <FormLabel
-                ms='4px'
-                fontSize='sm'
-                fontWeight='normal'
-                color='white'>
-                Email
+                ms="4px"
+                fontSize="sm"
+                fontWeight="normal"
+                color="white"
+              >
+                Correo
               </FormLabel>
               <GradientBorder
-                mb='24px'
+                mb="2px"
                 w={{ base: "100%", lg: "fit-content" }}
-                borderRadius='20px'>
+                borderRadius="20px"
+              >
                 <Input
-                  color='white'
-                  bg='rgb(19,21,54)'
-                  border='transparent'
-                  borderRadius='20px'
-                  fontSize='sm'
-                  size='lg'
+                  color="white"
+                  bg="rgb(102, 31, 0)"
+                  border="transparent"
+                  borderRadius="20px"
+                  fontSize="sm"
+                  size="lg"
                   w={{ base: "100%", md: "346px" }}
-                  maxW='100%'
-                  h='46px'
-                  placeholder='Your email adress'
+                  maxW="100%"
+                  h="46px"
+                  placeholder="Tu correo electrónico"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </GradientBorder>
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Alert
+                  status="error"
+                  borderRadius={7}
+                  mb="24px"
+                  p={1}
+                  fontSize={14}
+                  maxW={300}
+                  display={emailError ? "flex" : "none"}
+                >
+                  <AlertIcon />
+                  {emailError}
+                </Alert>
+              </Box>
             </FormControl>
             <FormControl>
               <FormLabel
-                ms='4px'
-                fontSize='sm'
-                fontWeight='normal'
-                color='white'>
-                Password
+                ms="4px"
+                fontSize="sm"
+                fontWeight="normal"
+                color="white"
+              >
+                Contraseña
               </FormLabel>
               <GradientBorder
-                mb='24px'
+                mb="2px"
                 w={{ base: "100%", lg: "fit-content" }}
-                borderRadius='20px'>
+                borderRadius="20px"
+              >
                 <Input
-                  color='white'
-                  bg='rgb(19,21,54)'
-                  border='transparent'
-                  borderRadius='20px'
-                  fontSize='sm'
-                  size='lg'
+                  color="white"
+                  bg="rgb(102, 31, 0)"
+                  border="transparent"
+                  borderRadius="20px"
+                  fontSize="sm"
+                  size="lg"
                   w={{ base: "100%", md: "346px" }}
-                  maxW='100%'
-                  type='password'
-                  placeholder='Your password'
+                  maxW="100%"
+                  type="password"
+                  placeholder="Tu contraseña"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </GradientBorder>
-            </FormControl>
-            <FormControl display='flex' alignItems='center'>
-              <DarkMode>
-                <Switch id='remember-login' colorScheme='brand' me='10px' />
-              </DarkMode>
-              <FormLabel
-                htmlFor='remember-login'
-                mb='0'
-                ms='1'
-                fontWeight='normal'
-                color='white'>
-                Remember me
-              </FormLabel>
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Alert
+                  status="error"
+                  borderRadius={7}
+                  mb="24px"
+                  p={1}
+                  fontSize={14}
+                  maxW={300}
+                  display={passwordError ? "flex" : "none"}
+                >
+                  <AlertIcon />
+                  {passwordError}
+                </Alert>
+              </Box>
+              {/* Error si los credenciales son incorrectos */}
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Alert
+                  status="error"
+                  borderRadius={7}
+                  mb="10px"
+                  p={2}
+                  fontSize={14}
+                  maxW={500}
+                  display={generalError ? "flex" : "none"}
+                >
+                  <AlertIcon />
+                  <AlertTitle>Credenciales Inválidos</AlertTitle>
+                  <AlertDescription>{generalError}</AlertDescription>
+                </Alert>
+              </Box>
             </FormControl>
             <Button
-              variant='brand'
-              fontSize='10px'
-              type='submit'
-              w='100%'
-              maxW='350px'
-              h='45'
-              mb='20px'
-              mt='20px'>
-              SIGN IN
+              variant="brand"
+              fontSize="14px"
+              type="submit"
+              w="100%"
+              maxW="350px"
+              h="45"
+              mb="20px"
+              mt="20px"
+              onClick={handleSignIn}
+            >
+              INGRESAR
             </Button>
-
-            <Flex
-              flexDirection='column'
-              justifyContent='center'
-              alignItems='center'
-              maxW='100%'
-              mt='0px'>
-              <Text color={textColor} fontWeight='medium'>
-                Don't have an account?
-                <Link color={titleColor} as='span' ms='5px' fontWeight='bold'>
-                  Sign Up
-                </Link>
-              </Text>
-            </Flex>
           </Flex>
         </Flex>
         <Box
-          w={{ base: "335px", md: "450px" }}
-          mx={{ base: "auto", lg: "unset" }}
-          ms={{ base: "auto", lg: "auto" }}
-          mb='80px'>
-          <AuthFooter />
-        </Box>
-        <Box
           display={{ base: "none", lg: "block" }}
-          overflowX='hidden'
-          h='100%'
+          overflowX="hidden"
+          h="100%"
           maxW={{ md: "50vw", lg: "50vw" }}
-          minH='100vh'
-          w='960px'
-          position='absolute'
-          left='0px'>
+          minH="100vh"
+          w="960px"
+          position="absolute"
+          left="0px"
+        >
           <Box
             bgImage={signInImage}
-            w='100%'
-            h='100%'
-            bgSize='cover'
-            bgPosition='50%'
-            position='absolute'
-            display='flex'
-            flexDirection='column'
-            justifyContent='center'
-            alignItems='center'>
-            <Text
-              textAlign='center'
-              color='white'
-              letterSpacing='8px'
-              fontSize='20px'
-              fontWeight='500'>
-              INSPIRED BY THE FUTURE:
-            </Text>
-            <Text
-              textAlign='center'
-              color='transparent'
-              letterSpacing='8px'
-              fontSize='36px'
-              fontWeight='bold'
-              bgClip='text !important'
-              bg='linear-gradient(94.56deg, #FFFFFF 79.99%, #21242F 102.65%)'>
-              THE VISION UI DASHBOARD
-            </Text>
+            w="100%"
+            h="100%"
+            bgSize="cover"
+            bgPosition="50%"
+            position="absolute"
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Box
+              position="absolute"
+              top={0}
+              left={0}
+              right={0}
+              bottom={0}
+              bg="rgba(0, 0, 0, 0.2)"
+              backdropFilter="blur(5px)"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              textAlign="center"
+            >
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                mb={8}
+              >
+                <Image src={logo} alt="logo" />
+              </Box>
+              <Text
+                color="white"
+                letterSpacing="8px"
+                fontSize="36px"
+                fontWeight="bold"
+              >
+                CONTABILIDAD, ACTIVOS & CONSULTORÍA
+              </Text>
+            </Box>
           </Box>
         </Box>
       </Flex>

@@ -1,8 +1,8 @@
 {
-  "name": "vision-dashboard-chakra",
+  "name": "contabilidad-activos-consultoria",
   "version": "1.0.1",
   "private": true,
-  "homepage": "https://demos.creative-tim.com/vision-ui-dashboard-chakra/#/",
+  "homepage": "https://dcc/contabilidad-activos-consultoria/#/",
   "dependencies": {
     "@chakra-ui/icons": "^1.1.5",
     "@chakra-ui/react": "1.8.8",
