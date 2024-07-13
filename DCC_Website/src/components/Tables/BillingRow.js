@@ -3,54 +3,79 @@ import React from "react";
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 
 function BillingRow(props) {
-  const { name, company, email, number } = props;
+  const {
+    ubicacion,
+    observaciones,
+    estado,
+    descripcion,
+    modelo,
+    marca,
+    tipo,
+    activoNum,
+    responsable,
+  } = props;
 
   return (
     <Box p="24px" bg="#3D3D3D" my="22px" borderRadius="20px">
       <Flex justify="space-between" w="100%" align="flex-start">
         <Flex direction="column" maxW="70%">
           <Text color="#fff" fontSize="sm" mb="10px">
-            {name}
+            Ejemplo de Activo
           </Text>
           <Text color="gray.400" fontSize="xs">
-            Company Name: {window.innerWidth < 768 ? <br /> : null}
+            Ubicación: {window.innerWidth < 768 ? <br /> : null}
             <Text as="span" color="gray.500">
-              {company}
+              {ubicacion}
             </Text>
           </Text>
           <Text color="gray.400" fontSize="xs">
-            Email Address:{" "}
+            Responsable: {window.innerWidth < 768 ? <br /> : null}
             <Text as="span" color="gray.500">
-              {email}
+              {responsable}
             </Text>
           </Text>
           <Text color="gray.400" fontSize="xs">
-            VAT Number:{" "}
+            Activo #:{" "}
             <Text as="span" color="gray.500">
-              {number}
+              {activoNum}
             </Text>
           </Text>
-        </Flex>
-        <Flex direction={{ sm: "column", md: "row" }} align="flex-start">
-          <Button
-            p="0px"
-            variant="no-hover"
-            mb={{ sm: "10px", md: "0px" }}
-            me={{ md: "12px" }}
-          >
-            <Flex color="red.500" cursor="pointer" align="center" p="12px">
-              <Icon as={FaTrashAlt} me="4px" w="16px" h="16px" />
-              <Text fontSize="xs">DELETE</Text>
-            </Flex>
-          </Button>
-          <Button p="0px" variant="no-hover">
-            <Flex color="#fff" cursor="pointer" align="center" p="12px">
-              <Icon as={FaPencilAlt} me="4px" w="14px" h="14px" />
-              <Text fontSize="xs" color="gray.400">
-                EDIT
-              </Text>
-            </Flex>
-          </Button>
+          <Text color="gray.400" fontSize="xs">
+            Tipo:{" "}
+            <Text as="span" color="gray.500">
+              {tipo}
+            </Text>
+          </Text>
+          <Text color="gray.400" fontSize="xs">
+            Marca:{" "}
+            <Text as="span" color="gray.500">
+              {marca}
+            </Text>
+          </Text>
+          <Text color="gray.400" fontSize="xs">
+            Modelo:{" "}
+            <Text as="span" color="gray.500">
+              {modelo}
+            </Text>
+          </Text>
+          <Text color="gray.400" fontSize="xs">
+            Descripción:{" "}
+            <Text as="span" color="gray.500">
+              {descripcion}
+            </Text>
+          </Text>
+          <Text color="gray.400" fontSize="xs">
+            Estado:{" "}
+            <Text as="span" color="gray.500">
+              {estado}
+            </Text>
+          </Text>
+          <Text color="gray.400" fontSize="xs">
+            Observaciones:{" "}
+            <Text as="span" color="gray.500">
+              {observaciones}
+            </Text>
+          </Text>
         </Flex>
       </Flex>
     </Box>
