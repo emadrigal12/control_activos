@@ -1,4 +1,6 @@
 import React from "react";
+import { useCreateEntity } from "../../hooks/useCreateEntity";
+import { useState } from "react";
 
 // Chakra imports
 import {
@@ -14,6 +16,8 @@ import {
   Stack,
   Checkbox,
   Select,
+  FormControl,
+  FormLabel,
 } from "@chakra-ui/react";
 
 // Custom components
@@ -22,521 +26,740 @@ import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import GradientBorder from "components/GradientBorder/GradientBorder";
 import BillingRow from "components/Tables/BillingRow";
-import InvoicesRow from "components/Tables/InvoicesRow";
-import TransactionRow from "components/Tables/TransactionRow";
 
 // Icons
-import { FaPencilAlt, FaRegCalendarAlt } from "react-icons/fa";
+import { FaPencilAlt } from "react-icons/fa";
 
 // Data
-import {
-  billingData,
-  invoicesData,
-  newestTransactions,
-  olderTransactions,
-} from "variables/general";
+import { billingData } from "variables/general";
 
 function Billing() {
+  const [formData, setFormData] = React.useState({
+    ubicacion: "",
+    responsable: "",
+    activoNum: "",
+    tipo: "",
+    marca: "",
+    modelo: "",
+    descripcion: "",
+    enUso: "",
+    depreciado: "",
+    observaciones: "",
+  });
+
+  const [errors, setErrors] = useState({});
+  const { mutate, isLoading } = useCreateEntity();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      if (
+        !formData[key] &&
+        key !== "enUso" &&
+        key !== "depreciado" &&
+        key !== "observaciones"
+      ) {
+        newErrors[key] = "Este campo es requerido";
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+    } else {
+      setErrors({});
+      mutate(formData);
+    }
+  };
+
+  const handleChange = (event) => {
+    const { name, type, value, checked } = event.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? (checked ? "1" : "0") : value,
+    }));
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "", // Limpiar el error cuando se cambia el valor del campo
+    }));
+  };
+
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }} mx="auto">
       <Grid templateColumns={{ sm: "1fr", lg: "60% 38%" }}>
         <Box>
           {/* Form para Ingresar Activos */}
           <Card>
-            <Flex
-              justify="space-between"
-              align="center"
-              minHeight="60px"
-              w="100%"
-              borderBottom="2px solid #595254"
-              mb={5}
-            >
-              <Text fontSize="xl" color="#fff" fontWeight="bold">
-                Ingreso de Activos
-              </Text>
-            </Flex>
-            <Grid
-              templateColumns={{
-                sm: "1fr",
-                md: "1fr 1fr",
-              }}
-              gap={{ sm: "0px", md: "20px" }}
-            >
-              {/* Inputs */}
-              <Box>
+            <form onSubmit={handleSubmit}>
+              <Flex
+                justify="space-between"
+                align="center"
+                minHeight="60px"
+                w="100%"
+                borderBottom="2px solid #595254"
+                mb={5}
+              >
+                <Text fontSize="xl" color="#fff" fontWeight="bold">
+                  Ingreso de Activos
+                </Text>
+              </Flex>
+              <Grid
+                templateColumns={{
+                  sm: "1fr",
+                  md: "1fr 1fr",
+                }}
+                gap={{ sm: "0px", md: "20px" }}
+              >
+                {/* Inputs */}
                 <Box>
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    minHeight="25px"
-                    w="100%"
-                  >
-                    <Text fontSize="lg" color="#fff" fontWeight="normal">
-                      Ubicación
-                    </Text>
-                  </Flex>
-                </Box>
-                <CardBody>
-                  <Flex
-                    direction={{ sm: "column", md: "row" }}
-                    align="center"
-                    w="100%"
-                    justify="center"
-                    py="1rem"
-                  >
-                    <GradientBorder
-                      mb={{ sm: "24px", md: "0px" }}
-                      me={{ sm: "0px", md: "24px" }}
-                      w="100%"
-                      borderRadius="20px"
-                    >
+                  <FormControl isInvalid={errors.ubicacion}>
+                    <Box>
                       <Flex
-                        p="5px"
-                        bg="rgb(61, 61, 61)"
-                        border="transparent"
-                        borderRadius="20px"
+                        justify="space-between"
                         align="center"
+                        minHeight="25px"
                         w="100%"
                       >
-                        <Input
-                          _focus={{ border: "none", boxShadow: "none" }}
-                          border="0px"
-                          color="white"
-                          placeholder="Indicar la Ubicación"
-                        ></Input>
-                        <Spacer />
-                        <Button
-                          p="0px"
-                          bg="transparent"
-                          w="16px"
-                          h="16px"
-                          variant="no-hover"
+                        <FormLabel
+                          fontSize="lg"
+                          color="#fff"
+                          fontWeight="normal"
                         >
-                          <Icon
-                            as={FaPencilAlt}
-                            color="#fff"
-                            w="12px"
-                            h="12px"
-                          />
-                        </Button>
+                          Ubicación
+                        </FormLabel>
                       </Flex>
-                    </GradientBorder>
-                  </Flex>
-                </CardBody>
-              </Box>
-
-              <Box>
-                <Box>
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    minHeight="25px"
-                    w="100%"
-                  >
-                    <Text fontSize="lg" color="#fff" fontWeight="normal">
-                      Responsable
-                    </Text>
-                  </Flex>
-                </Box>
-                <CardBody>
-                  <Flex
-                    direction={{ sm: "column", md: "row" }}
-                    align="center"
-                    w="100%"
-                    justify="center"
-                    py="1rem"
-                  >
-                    <GradientBorder
-                      mb={{ sm: "24px", md: "0px" }}
-                      me={{ sm: "0px", md: "24px" }}
-                      w="100%"
-                      borderRadius="20px"
-                    >
+                    </Box>
+                    <CardBody>
                       <Flex
-                        p="5px"
-                        bg="rgb(61, 61, 61)"
-                        border="transparent"
-                        borderRadius="20px"
+                        direction={{ sm: "column", md: "row" }}
                         align="center"
                         w="100%"
+                        justify="center"
+                        py="1rem"
                       >
-                        <Input
-                          _focus={{ border: "none", boxShadow: "none" }}
-                          border="0px"
-                          color="white"
-                          placeholder="Indicar el Responsable"
-                        ></Input>
-                        <Spacer />
-                        <Button
-                          p="0px"
-                          bg="transparent"
-                          w="16px"
-                          h="16px"
-                          variant="no-hover"
+                        <GradientBorder
+                          mb={{ sm: "24px", md: "0px" }}
+                          me={{ sm: "0px", md: "24px" }}
+                          w="100%"
+                          borderRadius="20px"
                         >
-                          <Icon
-                            as={FaPencilAlt}
-                            color="#fff"
-                            w="12px"
-                            h="12px"
-                          />
-                        </Button>
+                          <Flex
+                            p="5px"
+                            bg="rgb(61, 61, 61)"
+                            border="transparent"
+                            borderRadius="20px"
+                            align="center"
+                            w="100%"
+                          >
+                            <Input
+                              id="ubicacion"
+                              name="ubicacion"
+                              value={formData.ubicacion}
+                              onChange={handleChange}
+                              placeholder="Indicar la Ubicación"
+                              _focus={{ border: "none", boxShadow: "none" }}
+                              border="0px"
+                              color="white"
+                            ></Input>
+                            <Spacer />
+                          </Flex>
+                        </GradientBorder>
                       </Flex>
-                    </GradientBorder>
-                  </Flex>
-                </CardBody>
-              </Box>
-
-              <Box>
-                <Box>
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    minHeight="25px"
-                    w="100%"
-                  >
-                    <Text fontSize="lg" color="#fff" fontWeight="normal">
-                      Activo #
-                    </Text>
-                  </Flex>
+                    </CardBody>
+                  </FormControl>
                 </Box>
-                <CardBody>
-                  <Flex
-                    direction={{ sm: "column", md: "row" }}
-                    align="center"
-                    w="100%"
-                    justify="center"
-                    py="1rem"
-                  >
-                    <GradientBorder
-                      mb={{ sm: "24px", md: "0px" }}
-                      me={{ sm: "0px", md: "24px" }}
-                      w="100%"
-                      borderRadius="20px"
-                    >
+
+                <Box>
+                  <FormControl isInvalid={errors.responsable}>
+                    <Box>
                       <Flex
-                        p="5px"
-                        bg="rgb(61, 61, 61)"
-                        border="transparent"
-                        borderRadius="20px"
+                        justify="space-between"
                         align="center"
+                        minHeight="25px"
                         w="100%"
                       >
-                        <Input
-                          color="white"
-                          _focus={{ border: "none", boxShadow: "none" }}
-                          border="0px"
-                          placeholder="Indicar Placa del Activo"
-                        ></Input>
-                        <Spacer />
-                        <Button
-                          p="0px"
-                          bg="transparent"
-                          w="16px"
-                          h="16px"
-                          variant="no-hover"
+                        <FormLabel
+                          fontSize="lg"
+                          color="#fff"
+                          fontWeight="normal"
                         >
-                          <Icon
-                            as={FaPencilAlt}
-                            color="#fff"
-                            w="12px"
-                            h="12px"
-                          />
-                        </Button>
+                          Responsable
+                        </FormLabel>
                       </Flex>
-                    </GradientBorder>
-                  </Flex>
-                </CardBody>
-              </Box>
-
-              <Box>
-                <Box>
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    minHeight="25px"
-                    w="100%"
-                  >
-                    <Text fontSize="lg" color="#fff" fontWeight="normal">
-                      Tipo
-                    </Text>
-                  </Flex>
-                </Box>
-                <CardBody>
-                  <Flex
-                    direction={{ sm: "column", md: "row" }}
-                    align="center"
-                    w="100%"
-                    justify="center"
-                    py="1rem"
-                  >
-                    <GradientBorder
-                      mb={{ sm: "24px", md: "0px" }}
-                      me={{ sm: "0px", md: "24px" }}
-                      w="100%"
-                      borderRadius="20px"
-                    >
+                    </Box>
+                    <CardBody>
                       <Flex
-                        p="5px"
-                        bg="rgb(61, 61, 61)"
-                        border="transparent"
-                        borderRadius="20px"
+                        direction={{ sm: "column", md: "row" }}
                         align="center"
                         w="100%"
+                        justify="center"
+                        py="1rem"
                       >
-                        <Select
-                          placeholder="Elige una opción"
-                          color="white" // Placeholder color
-                          border="0px"
-                          _placeholder={{ color: "white" }}
-                          _focus={{ boxShadow: "none" }}
+                        <GradientBorder
+                          mb={{ sm: "24px", md: "0px" }}
+                          me={{ sm: "0px", md: "24px" }}
+                          w="100%"
+                          borderRadius="20px"
                         >
-                          <option style={{ color: "black" }} value="option1">
-                            Option 1
-                          </option>
-                          <option style={{ color: "black" }} value="option2">
-                            Option 2
-                          </option>
-                          <option style={{ color: "black" }} value="option3">
-                            Option 3
-                          </option>
-                        </Select>
-                        <Spacer />
+                          <Flex
+                            p="5px"
+                            bg="rgb(61, 61, 61)"
+                            border="transparent"
+                            borderRadius="20px"
+                            align="center"
+                            w="100%"
+                          >
+                            <Input
+                              id="responsable"
+                              name="responsable"
+                              _focus={{ border: "none", boxShadow: "none" }}
+                              border="0px"
+                              color="white"
+                              placeholder="Indicar el Responsable"
+                              value={formData.responsable}
+                              onChange={handleChange}
+                            ></Input>
+                            <Spacer />
+                            <Button
+                              p="0px"
+                              bg="transparent"
+                              w="16px"
+                              h="16px"
+                              variant="no-hover"
+                            >
+                              <Icon
+                                as={FaPencilAlt}
+                                color="#fff"
+                                w="12px"
+                                h="12px"
+                              />
+                            </Button>
+                          </Flex>
+                        </GradientBorder>
                       </Flex>
-                    </GradientBorder>
-                  </Flex>
-                </CardBody>
-              </Box>
-
-              <Box>
-                <Box>
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    minHeight="25px"
-                    w="100%"
-                  >
-                    <Text fontSize="lg" color="#fff" fontWeight="normal">
-                      Marca
-                    </Text>
-                  </Flex>
+                    </CardBody>
+                  </FormControl>
                 </Box>
-                <CardBody>
-                  <Flex
-                    direction={{ sm: "column", md: "row" }}
-                    align="center"
-                    w="100%"
-                    justify="center"
-                    py="1rem"
-                  >
-                    <GradientBorder
-                      mb={{ sm: "24px", md: "0px" }}
-                      me={{ sm: "0px", md: "24px" }}
-                      w="100%"
-                      borderRadius="20px"
-                    >
+
+                <Box>
+                  <FormControl isInvalid={errors.activoNum}>
+                    <Box>
                       <Flex
-                        p="5px"
-                        bg="rgb(61, 61, 61)"
-                        border="transparent"
-                        borderRadius="20px"
+                        justify="space-between"
                         align="center"
+                        minHeight="25px"
                         w="100%"
                       >
-                        <Input
-                          _focus={{ border: "none", boxShadow: "none" }}
-                          border="0px"
-                          color="white"
-                          placeholder="Indicar la Marca del Activo"
-                        ></Input>
-                        <Spacer />
-                        <Button
-                          p="0px"
-                          bg="transparent"
-                          w="16px"
-                          h="16px"
-                          variant="no-hover"
+                        <FormLabel
+                          fontSize="lg"
+                          color="#fff"
+                          fontWeight="normal"
                         >
-                          <Icon
-                            as={FaPencilAlt}
-                            color="#fff"
-                            w="12px"
-                            h="12px"
-                          />
-                        </Button>
+                          Activo #
+                        </FormLabel>
                       </Flex>
-                    </GradientBorder>
-                  </Flex>
-                </CardBody>
-              </Box>
-
-              <Box>
-                <Box>
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    minHeight="25px"
-                    w="100%"
-                  >
-                    <Text fontSize="lg" color="#fff" fontWeight="normal">
-                      Modelo
-                    </Text>
-                  </Flex>
-                </Box>
-                <CardBody>
-                  <Flex
-                    direction={{ sm: "column", md: "row" }}
-                    align="center"
-                    w="100%"
-                    justify="center"
-                    py="1rem"
-                  >
-                    <GradientBorder
-                      mb={{ sm: "24px", md: "0px" }}
-                      me={{ sm: "0px", md: "24px" }}
-                      w="100%"
-                      borderRadius="20px"
-                    >
+                    </Box>
+                    <CardBody>
                       <Flex
-                        p="5px"
-                        bg="rgb(61, 61, 61)"
-                        border="transparent"
-                        borderRadius="20px"
+                        direction={{ sm: "column", md: "row" }}
                         align="center"
                         w="100%"
+                        justify="center"
+                        py="1rem"
                       >
-                        <Input
-                          _focus={{ border: "none", boxShadow: "none" }}
-                          border="0px"
-                          color="white"
-                          placeholder="Indicar el Modelo del Activo"
-                        ></Input>
-                        <Spacer />
-                        <Button
-                          p="0px"
-                          bg="transparent"
-                          w="16px"
-                          h="16px"
-                          variant="no-hover"
+                        <GradientBorder
+                          mb={{ sm: "24px", md: "0px" }}
+                          me={{ sm: "0px", md: "24px" }}
+                          w="100%"
+                          borderRadius="20px"
                         >
-                          <Icon
-                            as={FaPencilAlt}
-                            color="#fff"
-                            w="12px"
-                            h="12px"
-                          />
-                        </Button>
+                          <Flex
+                            p="5px"
+                            bg="rgb(61, 61, 61)"
+                            border="transparent"
+                            borderRadius="20px"
+                            align="center"
+                            w="100%"
+                          >
+                            <Input
+                              id="activoNum"
+                              name="activoNum"
+                              color="white"
+                              _focus={{ border: "none", boxShadow: "none" }}
+                              border="0px"
+                              placeholder="Indicar Placa del Activo"
+                              value={formData.activoNum}
+                              onChange={handleChange}
+                            ></Input>
+                            <Spacer />
+                            <Button
+                              p="0px"
+                              bg="transparent"
+                              w="16px"
+                              h="16px"
+                              variant="no-hover"
+                            >
+                              <Icon
+                                as={FaPencilAlt}
+                                color="#fff"
+                                w="12px"
+                                h="12px"
+                              />
+                            </Button>
+                          </Flex>
+                        </GradientBorder>
                       </Flex>
-                    </GradientBorder>
-                  </Flex>
-                </CardBody>
-              </Box>
-
-              <Box>
-                <Box>
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    minHeight="25px"
-                    w="100%"
-                  >
-                    <Text fontSize="lg" color="#fff" fontWeight="normal">
-                      Descripción
-                    </Text>
-                  </Flex>
+                    </CardBody>
+                  </FormControl>
                 </Box>
-                <CardBody>
-                  <Flex
-                    direction={{ sm: "column", md: "row" }}
-                    align="center"
-                    w="100%"
-                    justify="center"
-                    py="1rem"
-                  >
-                    <GradientBorder
-                      mb={{ sm: "24px", md: "0px" }}
-                      me={{ sm: "0px", md: "24px" }}
-                      w="100%"
-                      borderRadius="20px"
-                    >
+
+                <Box>
+                  <FormControl isInvalid={errors.tipo}>
+                    <Box>
                       <Flex
-                        p="5px"
-                        bg="rgb(61, 61, 61)"
-                        border="transparent"
-                        borderRadius="20px"
+                        justify="space-between"
                         align="center"
+                        minHeight="25px"
                         w="100%"
                       >
-                        <Textarea
-                          _focus={{ border: "none", boxShadow: "none" }}
-                          border="0px"
-                          color="white"
-                          placeholder="Indicar la Descripción del Activo"
-                          maxH="200px"
-                        ></Textarea>
-                        <Spacer />
-                      </Flex>
-                    </GradientBorder>
-                  </Flex>
-                </CardBody>
-              </Box>
-
-              <Box>
-                <Box>
-                  <Flex
-                    justify="space-between"
-                    align="center"
-                    minHeight="25px"
-                    w="100%"
-                  >
-                    <Text fontSize="lg" color="#fff" fontWeight="normal">
-                      Estado
-                    </Text>
-                  </Flex>
-                </Box>
-                <CardBody>
-                  <Flex
-                    direction={{ sm: "column", md: "row" }}
-                    align="center"
-                    w="100%"
-                    justify="center"
-                    py="1rem"
-                  >
-                    <GradientBorder
-                      mb={{ sm: "24px", md: "0px" }}
-                      me={{ sm: "0px", md: "24px" }}
-                      w="100%"
-                      borderRadius="20px"
-                    >
-                      <Flex
-                        p="12px"
-                        bg="rgb(61, 61, 61)"
-                        border="transparent"
-                        borderRadius="20px"
-                        align="center"
-                        w="100%"
-                      >
-                        <Stack
-                          spacing={[1, 5]}
-                          direction={["column", "row"]}
-                          color="white"
+                        <FormLabel
+                          fontSize="lg"
+                          color="#fff"
+                          fontWeight="normal"
                         >
-                          <Checkbox size="sm" colorScheme="orange">
-                            En Uso
-                          </Checkbox>
-                          <Checkbox size="sm" colorScheme="orange">
-                            Depreciado
-                          </Checkbox>
-                        </Stack>
-                        <Spacer />
+                          Tipo
+                        </FormLabel>
                       </Flex>
-                    </GradientBorder>
-                  </Flex>
-                </CardBody>
+                    </Box>
+                    <CardBody>
+                      <Flex
+                        direction={{ sm: "column", md: "row" }}
+                        align="center"
+                        w="100%"
+                        justify="center"
+                        py="1rem"
+                      >
+                        <GradientBorder
+                          mb={{ sm: "24px", md: "0px" }}
+                          me={{ sm: "0px", md: "24px" }}
+                          w="100%"
+                          borderRadius="20px"
+                        >
+                          <Flex
+                            p="5px"
+                            bg="rgb(61, 61, 61)"
+                            border="transparent"
+                            borderRadius="20px"
+                            align="center"
+                            w="100%"
+                          >
+                            <Select
+                              id="tipo"
+                              name="tipo"
+                              placeholder="Elige una opción"
+                              color="white" // Placeholder color
+                              border="0px"
+                              _placeholder={{ color: "white" }}
+                              _focus={{ boxShadow: "none" }}
+                              value={formData.tipo}
+                              onChange={handleChange}
+                            >
+                              <option
+                                style={{ color: "black" }}
+                                value="Por Definir"
+                              >
+                                Por Definir
+                              </option>
+                              <option
+                                style={{ color: "black" }}
+                                value=" Mobiliario y Equipos"
+                              >
+                                Mobiliario y Equipos
+                              </option>
+                              <option
+                                style={{ color: "black" }}
+                                value="Tecnología y Electrónica"
+                              >
+                                Tecnología y Electrónica
+                              </option>
+                              <option
+                                style={{ color: "black" }}
+                                value="Herramientas y Utensilios"
+                              >
+                                Herramientas y Utensilios
+                              </option>
+                              <option
+                                style={{ color: "black" }}
+                                value="Suministros de Oficina"
+                              >
+                                Suministros de Oficina
+                              </option>
+                              <option
+                                style={{ color: "black" }}
+                                value="Equipos de Seguridad"
+                              >
+                                Equipos de Seguridad
+                              </option>
+                              <option
+                                style={{ color: "black" }}
+                                value="Materiales de Construcción"
+                              >
+                                Materiales de Construcción
+                              </option>
+                            </Select>
+                            <Spacer />
+                          </Flex>
+                        </GradientBorder>
+                      </Flex>
+                    </CardBody>
+                  </FormControl>
+                </Box>
+
+                <Box>
+                  <FormControl isInvalid={errors.marca}>
+                    <Box>
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        minHeight="25px"
+                        w="100%"
+                      >
+                        <FormLabel
+                          fontSize="lg"
+                          color="#fff"
+                          fontWeight="normal"
+                        >
+                          Marca
+                        </FormLabel>
+                      </Flex>
+                    </Box>
+                    <CardBody>
+                      <Flex
+                        direction={{ sm: "column", md: "row" }}
+                        align="center"
+                        w="100%"
+                        justify="center"
+                        py="1rem"
+                      >
+                        <GradientBorder
+                          mb={{ sm: "24px", md: "0px" }}
+                          me={{ sm: "0px", md: "24px" }}
+                          w="100%"
+                          borderRadius="20px"
+                        >
+                          <Flex
+                            p="5px"
+                            bg="rgb(61, 61, 61)"
+                            border="transparent"
+                            borderRadius="20px"
+                            align="center"
+                            w="100%"
+                          >
+                            <Input
+                              id="marca"
+                              name="marca"
+                              _focus={{ border: "none", boxShadow: "none" }}
+                              border="0px"
+                              color="white"
+                              placeholder="Indicar la Marca del Activo"
+                              value={formData.marca}
+                              onChange={handleChange}
+                            ></Input>
+                            <Spacer />
+                            <Button
+                              p="0px"
+                              bg="transparent"
+                              w="16px"
+                              h="16px"
+                              variant="no-hover"
+                            >
+                              <Icon
+                                as={FaPencilAlt}
+                                color="#fff"
+                                w="12px"
+                                h="12px"
+                              />
+                            </Button>
+                          </Flex>
+                        </GradientBorder>
+                      </Flex>
+                    </CardBody>
+                  </FormControl>
+                </Box>
+
+                <Box>
+                  <FormControl isInvalid={errors.modelo}>
+                    <Box>
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        minHeight="25px"
+                        w="100%"
+                      >
+                        <FormLabel
+                          fontSize="lg"
+                          color="#fff"
+                          fontWeight="normal"
+                        >
+                          Modelo
+                        </FormLabel>
+                      </Flex>
+                    </Box>
+                    <CardBody>
+                      <Flex
+                        direction={{ sm: "column", md: "row" }}
+                        align="center"
+                        w="100%"
+                        justify="center"
+                        py="1rem"
+                      >
+                        <GradientBorder
+                          mb={{ sm: "24px", md: "0px" }}
+                          me={{ sm: "0px", md: "24px" }}
+                          w="100%"
+                          borderRadius="20px"
+                        >
+                          <Flex
+                            p="5px"
+                            bg="rgb(61, 61, 61)"
+                            border="transparent"
+                            borderRadius="20px"
+                            align="center"
+                            w="100%"
+                          >
+                            <Input
+                              id="modelo"
+                              name="modelo"
+                              _focus={{ border: "none", boxShadow: "none" }}
+                              border="0px"
+                              color="white"
+                              placeholder="Indicar el Modelo del Activo"
+                              value={formData.modelo}
+                              onChange={handleChange}
+                            ></Input>
+                            <Spacer />
+                            <Button
+                              p="0px"
+                              bg="transparent"
+                              w="16px"
+                              h="16px"
+                              variant="no-hover"
+                            >
+                              <Icon
+                                as={FaPencilAlt}
+                                color="#fff"
+                                w="12px"
+                                h="12px"
+                              />
+                            </Button>
+                          </Flex>
+                        </GradientBorder>
+                      </Flex>
+                    </CardBody>
+                  </FormControl>
+                </Box>
+
+                <Box>
+                  <FormControl isInvalid={errors.descripcion}>
+                    <Box>
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        minHeight="25px"
+                        w="100%"
+                      >
+                        <FormLabel
+                          fontSize="lg"
+                          color="#fff"
+                          fontWeight="normal"
+                        >
+                          Descripción
+                        </FormLabel>
+                      </Flex>
+                    </Box>
+                    <CardBody>
+                      <Flex
+                        direction={{ sm: "column", md: "row" }}
+                        align="center"
+                        w="100%"
+                        justify="center"
+                        py="1rem"
+                      >
+                        <GradientBorder
+                          mb={{ sm: "24px", md: "0px" }}
+                          me={{ sm: "0px", md: "24px" }}
+                          w="100%"
+                          borderRadius="20px"
+                        >
+                          <Flex
+                            p="5px"
+                            bg="rgb(61, 61, 61)"
+                            border="transparent"
+                            borderRadius="20px"
+                            align="center"
+                            w="100%"
+                          >
+                            <Textarea
+                              id="descripcion"
+                              name="descripcion"
+                              _focus={{ border: "none", boxShadow: "none" }}
+                              border="0px"
+                              color="white"
+                              placeholder="Indicar la Descripción del Activo"
+                              maxH="200px"
+                              value={formData.descripcion}
+                              onChange={handleChange}
+                            ></Textarea>
+                            <Spacer />
+                          </Flex>
+                        </GradientBorder>
+                      </Flex>
+                    </CardBody>
+                  </FormControl>
+                </Box>
+
+                <Box>
+                  <FormControl>
+                    <Box>
+                      <Flex
+                        justify="space-between"
+                        align="center"
+                        minHeight="25px"
+                        w="100%"
+                      >
+                        <FormLabel
+                          fontSize="lg"
+                          color="#fff"
+                          fontWeight="normal"
+                        >
+                          Estado
+                        </FormLabel>
+                      </Flex>
+                    </Box>
+                    <CardBody>
+                      <Flex
+                        direction={{ sm: "column", md: "row" }}
+                        align="center"
+                        w="100%"
+                        justify="center"
+                        py="1rem"
+                      >
+                        <GradientBorder
+                          mb={{ sm: "24px", md: "0px" }}
+                          me={{ sm: "0px", md: "24px" }}
+                          w="100%"
+                          borderRadius="20px"
+                        >
+                          <Flex
+                            p="12px"
+                            bg="rgb(61, 61, 61)"
+                            border="transparent"
+                            borderRadius="20px"
+                            align="center"
+                            w="100%"
+                          >
+                            <Stack
+                              spacing={[1, 5]}
+                              direction={["column", "row"]}
+                              color="white"
+                            >
+                              <Checkbox
+                                id="enUso"
+                                name="enUso"
+                                size="sm"
+                                colorScheme="orange"
+                                isChecked={formData.enUso === "1"}
+                                onChange={(e) => {
+                                  setFormData((prevData) => ({
+                                    ...prevData,
+                                    enUso: e.target.checked ? "1" : "0",
+                                  }));
+                                }}
+                              >
+                                En Uso
+                              </Checkbox>
+                              <Checkbox
+                                id="depreciado"
+                                name="depreciado"
+                                size="sm"
+                                colorScheme="orange"
+                                isChecked={formData.depreciado === "1"}
+                                onChange={(e) => {
+                                  setFormData((prevData) => ({
+                                    ...prevData,
+                                    depreciado: e.target.checked ? "1" : "0",
+                                  }));
+                                }}
+                              >
+                                Depreciado
+                              </Checkbox>
+                            </Stack>
+                            <Spacer />
+                          </Flex>
+                        </GradientBorder>
+                      </Flex>
+                    </CardBody>
+                  </FormControl>
+                </Box>
+              </Grid>
+
+              <Box mt={5} borderTop="2px solid #595254">
+                <FormControl>
+                  <Box>
+                    <Flex
+                      justify="center"
+                      align="center"
+                      minHeight="25px"
+                      w="100%"
+                      mt={5}
+                    >
+                      <FormLabel fontSize="lg" color="#fff" fontWeight="normal">
+                        Observaciones
+                      </FormLabel>
+                    </Flex>
+                  </Box>
+                  <CardBody>
+                    <Flex
+                      mx={{ sm: "0px", md: "24px", lg: "10px" }}
+                      direction={{ sm: "column", md: "row" }}
+                      align="center"
+                      w="100%"
+                      justify="center"
+                      py="1rem"
+                    >
+                      <GradientBorder
+                        mb={{ sm: "24px", md: "0px" }}
+                        me={{ sm: "0px", md: "24px" }}
+                        w="100%"
+                        borderRadius="20px"
+                      >
+                        <Flex
+                          p="5px"
+                          bg="rgb(61, 61, 61)"
+                          border="transparent"
+                          borderRadius="20px"
+                          align="center"
+                          w="100%"
+                        >
+                          <Textarea
+                            id="observaciones"
+                            name="observaciones"
+                            _focus={{ border: "none", boxShadow: "none" }}
+                            border="0px"
+                            color="white"
+                            placeholder="Indicar Observaciones del Activo"
+                            maxH="200px"
+                            value={formData.observaciones}
+                            onChange={handleChange}
+                          ></Textarea>
+                          <Spacer />
+                        </Flex>
+                      </GradientBorder>
+                    </Flex>
+                  </CardBody>
+                </FormControl>
               </Box>
-              {/* Fin Inputs */}
-            </Grid>
-            <Box mt={5} borderTop="2px solid #595254">
               <Box>
                 <Flex
                   justify="center"
@@ -545,112 +768,34 @@ function Billing() {
                   w="100%"
                   mt={5}
                 >
-                  <Text fontSize="lg" color="#fff" fontWeight="normal">
-                    Observaciones
-                  </Text>
+                  <Button
+                    type="submit"
+                    variant="brand"
+                    fontSize="12px"
+                    fontWeight="bold"
+                    p="6px 32px"
+                    onClick={handleSubmit}
+                    isDisabled={isLoading}
+                    aria-label="Guardar datos"
+                  >
+                    {isLoading ? "Guardando..." : "GUARDAR"}
+                  </Button>
                 </Flex>
               </Box>
-              <CardBody>
-                <Flex
-                  mx={{ sm: "0px", md: "24px", lg: "10px" }}
-                  direction={{ sm: "column", md: "row" }}
-                  align="center"
-                  w="100%"
-                  justify="center"
-                  py="1rem"
-                >
-                  <GradientBorder
-                    mb={{ sm: "24px", md: "0px" }}
-                    me={{ sm: "0px", md: "24px" }}
-                    w="100%"
-                    borderRadius="20px"
-                  >
-                    <Flex
-                      p="5px"
-                      bg="rgb(61, 61, 61)"
-                      border="transparent"
-                      borderRadius="20px"
-                      align="center"
-                      w="100%"
-                    >
-                      <Textarea
-                        _focus={{ border: "none", boxShadow: "none" }}
-                        border="0px"
-                        color="white"
-                        placeholder="Indicar Observaciones del Activo"
-                        maxH="200px"
-                      ></Textarea>
-                      <Spacer />
-                    </Flex>
-                  </GradientBorder>
-                </Flex>
-              </CardBody>
-            </Box>
-            <Box>
-              <Flex
-                justify="center"
-                align="center"
-                minHeight="25px"
-                w="100%"
-                mt={5}
-              >
-                <Button
-                  variant="brand"
-                  fontSize="12px"
-                  fontWeight="bold"
-                  p="6px 32px"
-                >
-                  GUARDAR
-                </Button>
-              </Flex>
-            </Box>
+            </form>
           </Card>
         </Box>
-        {/* Invoices List */}
+        {/* FIN Form para Ingresar Activos */}
+        {/* Ejemplo Activo */}
         <Card
           p="22px"
           my={{ sm: "24px", lg: "0px" }}
           ms={{ sm: "0px", lg: "24px" }}
         >
-          <CardHeader>
-            <Flex justify="space-between" align="center" mb="1rem" w="100%">
-              <Text fontSize="lg" color="#fff" fontWeight="bold">
-                Invoices
-              </Text>
-              <Button
-                variant="brand"
-                fontSize="10px"
-                fontWeight="bold"
-                p="6px 32px"
-              >
-                VIEW ALL
-              </Button>
-            </Flex>
-          </CardHeader>
-          <CardBody>
-            <Flex direction="column" w="100%">
-              {invoicesData.map((row) => {
-                return (
-                  <InvoicesRow
-                    date={row.date}
-                    code={row.code}
-                    price={row.price}
-                    logo={row.logo}
-                    format={row.format}
-                  />
-                );
-              })}
-            </Flex>
-          </CardBody>
-        </Card>
-      </Grid>
-      <Grid templateColumns={{ sm: "1fr", lg: "60% 38%" }}>
-        {/* Billing Information */}
-        <Card my={{ lg: "24px" }} me={{ lg: "24px" }}>
           <Flex direction="column">
             <CardHeader py="12px">
               <Text color="#fff" fontSize="lg" fontWeight="bold">
-                Billing Information
+                Guía de Ingreso de Activos
               </Text>
             </CardHeader>
             <CardBody>
@@ -658,80 +803,21 @@ function Billing() {
                 {billingData.map((row) => {
                   return (
                     <BillingRow
-                      name={row.name}
-                      company={row.company}
-                      email={row.email}
-                      number={row.number}
+                      ubicacion={row.ubicacion}
+                      responsable={row.responsable}
+                      activoNum={row.activoNum}
+                      tipo={row.tipo}
+                      marca={row.marca}
+                      modelo={row.modelo}
+                      descripcion={row.descripcion}
+                      estado={row.estado}
+                      observaciones={row.observaciones}
                     />
                   );
                 })}
               </Flex>
             </CardBody>
           </Flex>
-        </Card>
-        {/* Transactions List */}
-        <Card my="24px" ms={{ lg: "24px" }}>
-          <CardHeader mb="12px">
-            <Flex direction="column" w="100%">
-              <Flex
-                direction={{ sm: "column", lg: "row" }}
-                justify={{ sm: "center", lg: "space-between" }}
-                align={{ sm: "center" }}
-                w="100%"
-                my={{ md: "12px" }}
-              >
-                <Text
-                  color="#fff"
-                  fontSize={{ sm: "lg", md: "xl", lg: "lg" }}
-                  fontWeight="bold"
-                >
-                  Your Transactions
-                </Text>
-                <Flex align="center">
-                  <Icon
-                    as={FaRegCalendarAlt}
-                    color="gray.400"
-                    w="15px"
-                    h="15px"
-                    me="6px"
-                  />
-                  <Text color="gray.400" fontSize="sm">
-                    23 - 30 March 2021
-                  </Text>
-                </Flex>
-              </Flex>
-            </Flex>
-          </CardHeader>
-          <CardBody>
-            <Flex direction="column" w="100%">
-              <Text color="gray.400" fontSize="xs" mb="18px">
-                NEWEST
-              </Text>
-              {newestTransactions.map((row) => {
-                return (
-                  <TransactionRow
-                    name={row.name}
-                    logo={row.logo}
-                    date={row.date}
-                    price={row.price}
-                  />
-                );
-              })}
-              <Text color="gray.400" fontSize="xs" my="18px">
-                OLDER
-              </Text>
-              {olderTransactions.map((row) => {
-                return (
-                  <TransactionRow
-                    name={row.name}
-                    logo={row.logo}
-                    date={row.date}
-                    price={row.price}
-                  />
-                );
-              })}
-            </Flex>
-          </CardBody>
         </Card>
       </Grid>
     </Flex>

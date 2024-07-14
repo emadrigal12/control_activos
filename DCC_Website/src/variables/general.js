@@ -156,44 +156,6 @@ export const rtlDashboardTableData = [
   },
 ];
 
-export const rtlTimelineData = [
-  {
-    logo: FaBell,
-    title: "$2400, تغييرات في التصميم",
-    date: "22 DEC 7:20 PM",
-    color: "teal.300",
-  },
-  {
-    logo: FaHtml5,
-    title: "طلب جديد #4219423",
-    date: "21 DEC 11:21 PM",
-    color: "orange",
-  },
-  {
-    logo: FaShoppingCart,
-    title: "مدفوعات الخادم لشهر أبريل",
-    date: "21 DEC 9:28 PM",
-    color: "blue.400",
-  },
-  {
-    logo: FaCreditCard,
-    title: "تمت إضافة بطاقة جديدة للطلب #3210145",
-    date: "20 DEC 3:52 PM",
-    color: "orange.300",
-  },
-  {
-    logo: SiDropbox,
-    title: "فتح الحزم من أجل التنمية",
-    date: "19 DEC 11:35 PM",
-    color: "purple",
-  },
-  {
-    logo: AdobexdLogo,
-    title: "طلب جديد #9851258",
-    date: "18 DEC 4:41 PM",
-  },
-];
-
 export const tablesTableData = [
   {
     logo: avatar1,
@@ -291,8 +253,8 @@ export const tablesProjectData = [
 
 export const invoicesData = [
   {
-    date: "March, 01, 2020",
-    code: "#MS-415646",
+    date: "Ubicación",
+    code: "102",
     price: "$180",
     logo: FaFilePdf,
     format: "PDF",
@@ -329,22 +291,38 @@ export const invoicesData = [
 
 export const billingData = [
   {
-    name: "Oliver Liam",
-    company: "Viking Burrito",
-    email: "oliver@burrito.com",
-    number: "FRB1235476",
+    ubicacion: "102",
+    responsable: "Emiliano Madrigal",
+    activoNum: "5487",
+    tipo: "Mobiliario y Equipos",
+    marca: "Iasko",
+    modelo: "4916",
+    descripcion: "Abanico",
+    estado: "En Uso",
+    observaciones: "Sin Observaciones",
   },
   {
-    name: "Lucas Harper",
-    company: "Stone Tech Zone",
-    email: "lucas@stone-tech.com",
-    number: "FRB1235476",
+    ubicacion: "68",
+    responsable: "María Paula Lobo",
+    activoNum: "3262",
+    tipo: "Herramientas y Utensilios",
+    marca: "Chastworth",
+    modelo: "4916",
+    descripcion: "Canasta Tipo Escalera",
+    estado: "En Uso, Depreciado",
+    observaciones:
+      "Realizar mantenimiento trimestral y verificar estado de seguridad.",
   },
   {
-    name: "Ethan James",
-    company: "Fiber Notion",
-    email: "ethan@fiber.com",
-    number: "FRB1235476",
+    ubicacion: "140",
+    responsable: "Juan Esteban Mejia",
+    activoNum: "9452",
+    tipo: "Teconología y Electrónica",
+    marca: "Systimax",
+    modelo: "7845",
+    descripcion: "Patch Panel de 48 puertos",
+    estado: "n/a",
+    observaciones: "Revisar cables y conexiones cada seis meses.",
   },
 ];
 
