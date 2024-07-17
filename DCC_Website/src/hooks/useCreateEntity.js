@@ -3,10 +3,12 @@ import { useToast } from "@chakra-ui/react";
 
 const createEntity = async (data) => {
   console.log("Objeto a crear:", data);
-  const response = await fetch("https://...", {
+  const token = localStorage.getItem("token");
+  const response = await fetch("http://localhost:4000/articulos", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
@@ -16,7 +18,7 @@ const createEntity = async (data) => {
   return response.json();
 };
 
-export const useCreateEntity = () => {
+export const useCreateEntity = (resetForm) => {
   const toast = useToast();
 
   return useMutation(createEntity, {
@@ -27,6 +29,7 @@ export const useCreateEntity = () => {
         duration: 3000,
         isClosable: true,
       });
+      resetForm();
     },
     onError: (error) => {
       toast({

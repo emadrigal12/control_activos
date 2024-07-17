@@ -47,41 +47,40 @@ const useSignIn = () => {
       setGeneralError("");
       const data = {
         username: email,
-        password: password
+        password: password,
       };
-      
+
       try {
-        const response = await fetch('http://localhost:4000/login', {
-          method: 'POST',
+        const response = await fetch("http://localhost:4000/login", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify(data),
         });
-        
+
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
-        
+
         const result = await response.json();
-        
-        if (result.message && result.message === 'Invalid user') {
+
+        if (result.message && result.message === "Invalid user") {
           setGeneralError("Correo o contraseña incorrectos");
-          console.log("Correo o contraseña incorrectos");
         } else {
-          console.log("Iniciando sesión con:");
-          console.log("Correo:", email);
-          console.log("Contraseña:", password);
           console.log("Inicio de sesión exitoso");
+
+          // Almacenar el token en localStorage
+          localStorage.setItem("token", result.token);
+
           history.push("/dashboard");
         }
       } catch (error) {
-        console.error('Error en la solicitud de inicio de sesión:', error);
+        console.error("Error en la solicitud de inicio de sesión:", error);
         setGeneralError("Error en la solicitud de inicio de sesión");
       }
     }
   };
-  
 
   // Retorno de estados y funciones necesarias para el componente SignIn
   return {

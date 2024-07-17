@@ -1,6 +1,7 @@
 import React from "react";
 import { useCreateEntity } from "../../hooks/useCreateEntity";
-import { useState } from "react";
+import useUserData from "../../hooks/useUserData";
+import { useState, useEffect } from "react";
 
 // Chakra imports
 import {
@@ -8,8 +9,6 @@ import {
   Button,
   Flex,
   Grid,
-  Icon,
-  Spacer,
   Text,
   Input,
   Textarea,
@@ -28,39 +27,59 @@ import GradientBorder from "components/GradientBorder/GradientBorder";
 import BillingRow from "components/Tables/BillingRow";
 
 // Icons
-import { FaPencilAlt } from "react-icons/fa";
 
 // Data
 import { billingData } from "variables/general";
 
 function Billing() {
+  // Obtener el nombre del responsable
+  const { user, id } = useUserData();
+  // Asignar el nombre del responsable al campo correspondiente
+  const nombreResponsable = user;
+
   const [formData, setFormData] = React.useState({
-    ubicacion: "",
-    responsable: "",
-    activoNum: "",
-    tipo: "",
-    marca: "",
-    modelo: "",
-    descripcion: "",
-    enUso: "",
-    depreciado: "",
-    observaciones: "",
+    Ubicacion: "",
+    Id_Usuario: id || "",
+    Activo_Num: "",
+    Tipo: "",
+    Marca: "",
+    Modelo: "",
+    Descripcion: "",
+    En_Uso: "0",
+    Depreciado: "0",
   });
 
   const [errors, setErrors] = useState({});
-  const { mutate, isLoading } = useCreateEntity();
+  const resetForm = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      Ubicacion: "",
+      Activo_Num: "",
+      Tipo: "",
+      Marca: "",
+      Modelo: "",
+      Descripcion: "",
+      En_Uso: "0",
+      Depreciado: "0",
+    }));
+  };
+  const { mutate, isLoading } = useCreateEntity(resetForm);
+
+  useEffect(() => {
+    if (id) {
+      setFormData((prevData) => ({
+        ...prevData,
+        Id_Usuario: id,
+      }));
+    }
+  }, [id]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
-      if (
-        !formData[key] &&
-        key !== "enUso" &&
-        key !== "depreciado" &&
-        key !== "observaciones"
-      ) {
+      if (!formData[key] && key !== "En_Uso" && key !== "Depreciado") {
         newErrors[key] = "Este campo es requerido";
       }
     });
@@ -113,7 +132,7 @@ function Billing() {
               >
                 {/* Inputs */}
                 <Box>
-                  <FormControl isInvalid={errors.ubicacion}>
+                  <FormControl isInvalid={errors.Ubicacion}>
                     <Box>
                       <Flex
                         justify="space-between"
@@ -153,16 +172,15 @@ function Billing() {
                             w="100%"
                           >
                             <Input
-                              id="ubicacion"
-                              name="ubicacion"
-                              value={formData.ubicacion}
+                              id="Ubicacion"
+                              name="Ubicacion"
+                              value={formData.Ubicacion}
                               onChange={handleChange}
                               placeholder="Indicar la Ubicación"
                               _focus={{ border: "none", boxShadow: "none" }}
                               border="0px"
                               color="white"
                             ></Input>
-                            <Spacer />
                           </Flex>
                         </GradientBorder>
                       </Flex>
@@ -171,7 +189,7 @@ function Billing() {
                 </Box>
 
                 <Box>
-                  <FormControl isInvalid={errors.responsable}>
+                  <FormControl isInvalid={errors.Id_Usuario}>
                     <Box>
                       <Flex
                         justify="space-between"
@@ -211,30 +229,16 @@ function Billing() {
                             w="100%"
                           >
                             <Input
-                              id="responsable"
-                              name="responsable"
+                              readOnly
+                              cursor={"not-allowed"}
+                              id="Id_Usuario"
+                              name="Id_Usuario"
                               _focus={{ border: "none", boxShadow: "none" }}
                               border="0px"
                               color="white"
-                              placeholder="Indicar el Responsable"
-                              value={formData.responsable}
-                              onChange={handleChange}
+                              placeholder="Este campo se llena automáticamente"
+                              value={nombreResponsable}
                             ></Input>
-                            <Spacer />
-                            <Button
-                              p="0px"
-                              bg="transparent"
-                              w="16px"
-                              h="16px"
-                              variant="no-hover"
-                            >
-                              <Icon
-                                as={FaPencilAlt}
-                                color="#fff"
-                                w="12px"
-                                h="12px"
-                              />
-                            </Button>
                           </Flex>
                         </GradientBorder>
                       </Flex>
@@ -243,7 +247,7 @@ function Billing() {
                 </Box>
 
                 <Box>
-                  <FormControl isInvalid={errors.activoNum}>
+                  <FormControl isInvalid={errors.Activo_Num}>
                     <Box>
                       <Flex
                         justify="space-between"
@@ -283,30 +287,15 @@ function Billing() {
                             w="100%"
                           >
                             <Input
-                              id="activoNum"
-                              name="activoNum"
+                              id="Activo_Num"
+                              name="Activo_Num"
                               color="white"
                               _focus={{ border: "none", boxShadow: "none" }}
                               border="0px"
                               placeholder="Indicar Placa del Activo"
-                              value={formData.activoNum}
+                              value={formData.Activo_Num}
                               onChange={handleChange}
                             ></Input>
-                            <Spacer />
-                            <Button
-                              p="0px"
-                              bg="transparent"
-                              w="16px"
-                              h="16px"
-                              variant="no-hover"
-                            >
-                              <Icon
-                                as={FaPencilAlt}
-                                color="#fff"
-                                w="12px"
-                                h="12px"
-                              />
-                            </Button>
                           </Flex>
                         </GradientBorder>
                       </Flex>
@@ -315,7 +304,7 @@ function Billing() {
                 </Box>
 
                 <Box>
-                  <FormControl isInvalid={errors.tipo}>
+                  <FormControl isInvalid={errors.Tipo}>
                     <Box>
                       <Flex
                         justify="space-between"
@@ -355,14 +344,13 @@ function Billing() {
                             w="100%"
                           >
                             <Select
-                              id="tipo"
-                              name="tipo"
+                              id="Tipo"
+                              name="Tipo"
                               placeholder="Elige una opción"
-                              color="white" // Placeholder color
+                              color="white"
                               border="0px"
-                              _placeholder={{ color: "white" }}
                               _focus={{ boxShadow: "none" }}
-                              value={formData.tipo}
+                              value={formData.Tipo}
                               onChange={handleChange}
                             >
                               <option
@@ -408,7 +396,6 @@ function Billing() {
                                 Materiales de Construcción
                               </option>
                             </Select>
-                            <Spacer />
                           </Flex>
                         </GradientBorder>
                       </Flex>
@@ -417,7 +404,7 @@ function Billing() {
                 </Box>
 
                 <Box>
-                  <FormControl isInvalid={errors.marca}>
+                  <FormControl isInvalid={errors.Marca}>
                     <Box>
                       <Flex
                         justify="space-between"
@@ -457,30 +444,15 @@ function Billing() {
                             w="100%"
                           >
                             <Input
-                              id="marca"
-                              name="marca"
+                              id="Marca"
+                              name="Marca"
                               _focus={{ border: "none", boxShadow: "none" }}
                               border="0px"
                               color="white"
                               placeholder="Indicar la Marca del Activo"
-                              value={formData.marca}
+                              value={formData.Marca}
                               onChange={handleChange}
                             ></Input>
-                            <Spacer />
-                            <Button
-                              p="0px"
-                              bg="transparent"
-                              w="16px"
-                              h="16px"
-                              variant="no-hover"
-                            >
-                              <Icon
-                                as={FaPencilAlt}
-                                color="#fff"
-                                w="12px"
-                                h="12px"
-                              />
-                            </Button>
                           </Flex>
                         </GradientBorder>
                       </Flex>
@@ -489,7 +461,7 @@ function Billing() {
                 </Box>
 
                 <Box>
-                  <FormControl isInvalid={errors.modelo}>
+                  <FormControl isInvalid={errors.Modelo}>
                     <Box>
                       <Flex
                         justify="space-between"
@@ -529,30 +501,15 @@ function Billing() {
                             w="100%"
                           >
                             <Input
-                              id="modelo"
-                              name="modelo"
+                              id="Modelo"
+                              name="Modelo"
                               _focus={{ border: "none", boxShadow: "none" }}
                               border="0px"
                               color="white"
                               placeholder="Indicar el Modelo del Activo"
-                              value={formData.modelo}
+                              value={formData.Modelo}
                               onChange={handleChange}
                             ></Input>
-                            <Spacer />
-                            <Button
-                              p="0px"
-                              bg="transparent"
-                              w="16px"
-                              h="16px"
-                              variant="no-hover"
-                            >
-                              <Icon
-                                as={FaPencilAlt}
-                                color="#fff"
-                                w="12px"
-                                h="12px"
-                              />
-                            </Button>
                           </Flex>
                         </GradientBorder>
                       </Flex>
@@ -561,7 +518,7 @@ function Billing() {
                 </Box>
 
                 <Box>
-                  <FormControl isInvalid={errors.descripcion}>
+                  <FormControl isInvalid={errors.Descripcion}>
                     <Box>
                       <Flex
                         justify="space-between"
@@ -601,17 +558,16 @@ function Billing() {
                             w="100%"
                           >
                             <Textarea
-                              id="descripcion"
-                              name="descripcion"
+                              id="Descripcion"
+                              name="Descripcion"
                               _focus={{ border: "none", boxShadow: "none" }}
                               border="0px"
                               color="white"
                               placeholder="Indicar la Descripción del Activo"
                               maxH="200px"
-                              value={formData.descripcion}
+                              value={formData.Descripcion}
                               onChange={handleChange}
                             ></Textarea>
-                            <Spacer />
                           </Flex>
                         </GradientBorder>
                       </Flex>
@@ -665,37 +621,36 @@ function Billing() {
                               color="white"
                             >
                               <Checkbox
-                                id="enUso"
-                                name="enUso"
+                                id="En_Uso"
+                                name="En_Uso"
                                 size="sm"
                                 colorScheme="orange"
-                                isChecked={formData.enUso === "1"}
+                                isChecked={formData.En_Uso === "1"}
                                 onChange={(e) => {
                                   setFormData((prevData) => ({
                                     ...prevData,
-                                    enUso: e.target.checked ? "1" : "0",
+                                    En_Uso: e.target.checked ? "1" : "0",
                                   }));
                                 }}
                               >
                                 En Uso
                               </Checkbox>
                               <Checkbox
-                                id="depreciado"
-                                name="depreciado"
+                                id="Depreciado"
+                                name="Depreciado"
                                 size="sm"
                                 colorScheme="orange"
-                                isChecked={formData.depreciado === "1"}
+                                isChecked={formData.Depreciado === "1"}
                                 onChange={(e) => {
                                   setFormData((prevData) => ({
                                     ...prevData,
-                                    depreciado: e.target.checked ? "1" : "0",
+                                    Depreciado: e.target.checked ? "1" : "0",
                                   }));
                                 }}
                               >
                                 Depreciado
                               </Checkbox>
                             </Stack>
-                            <Spacer />
                           </Flex>
                         </GradientBorder>
                       </Flex>
@@ -704,62 +659,7 @@ function Billing() {
                 </Box>
               </Grid>
 
-              <Box mt={5} borderTop="2px solid #595254">
-                <FormControl>
-                  <Box>
-                    <Flex
-                      justify="center"
-                      align="center"
-                      minHeight="25px"
-                      w="100%"
-                      mt={5}
-                    >
-                      <FormLabel fontSize="lg" color="#fff" fontWeight="normal">
-                        Observaciones
-                      </FormLabel>
-                    </Flex>
-                  </Box>
-                  <CardBody>
-                    <Flex
-                      mx={{ sm: "0px", md: "24px", lg: "10px" }}
-                      direction={{ sm: "column", md: "row" }}
-                      align="center"
-                      w="100%"
-                      justify="center"
-                      py="1rem"
-                    >
-                      <GradientBorder
-                        mb={{ sm: "24px", md: "0px" }}
-                        me={{ sm: "0px", md: "24px" }}
-                        w="100%"
-                        borderRadius="20px"
-                      >
-                        <Flex
-                          p="5px"
-                          bg="rgb(61, 61, 61)"
-                          border="transparent"
-                          borderRadius="20px"
-                          align="center"
-                          w="100%"
-                        >
-                          <Textarea
-                            id="observaciones"
-                            name="observaciones"
-                            _focus={{ border: "none", boxShadow: "none" }}
-                            border="0px"
-                            color="white"
-                            placeholder="Indicar Observaciones del Activo"
-                            maxH="200px"
-                            value={formData.observaciones}
-                            onChange={handleChange}
-                          ></Textarea>
-                          <Spacer />
-                        </Flex>
-                      </GradientBorder>
-                    </Flex>
-                  </CardBody>
-                </FormControl>
-              </Box>
+              <Box mt={5} borderTop="2px solid #595254"></Box>
               <Box>
                 <Flex
                   justify="center"
@@ -803,6 +703,7 @@ function Billing() {
                 {billingData.map((row) => {
                   return (
                     <BillingRow
+                      key={row.id}
                       ubicacion={row.ubicacion}
                       responsable={row.responsable}
                       activoNum={row.activoNum}
@@ -811,7 +712,6 @@ function Billing() {
                       modelo={row.modelo}
                       descripcion={row.descripcion}
                       estado={row.estado}
-                      observaciones={row.observaciones}
                     />
                   );
                 })}
