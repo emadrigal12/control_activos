@@ -14,6 +14,16 @@ router.get('/dashboard', authMiddleware, (req, res) => {
 });
 
 //Activos
-router.get('/activos', authMiddleware, activoController.obtenerActivos);
+router.get('/articulos', authMiddleware, activoController.obtenerArticulos);
+router.get('/articulos/:id', authMiddleware, activoController.obtenerArticuloPorId);
+router.post('/articulos', authMiddleware, activoController.crearArticulo);
+router.put('/articulos/:id', authMiddleware, activoController.actualizarArticulo);
+router.delete('/articulos/:id', authMiddleware, activoController.eliminarArticulo);
+
+
+//Perfil
+
+
+//Proyectos
 
 module.exports = router;
