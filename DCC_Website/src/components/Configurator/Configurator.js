@@ -13,6 +13,7 @@ import {
   Text,
   DarkMode,
   LightMode,
+  useToast,
 } from "@chakra-ui/react";
 import GitHubButton from "react-github-btn";
 import { Separator } from "components/Separator/Separator";
@@ -20,9 +21,30 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { FaTwitter, FaFacebook } from "react-icons/fa";
 
+// Hooks
+import { AuthContext } from "hooks/AuthContext";
+import useUserData from "hooks/useUserData";
+
 export default function Configurator(props) {
+  // Data from the user
+  const { userData } = useUserData();
+
   const { secondary, isOpen, onClose, fixed, ...rest } = props;
   const [switched, setSwitched] = useState(props.isChecked);
+
+  // Log out function
+  const { logout } = React.useContext(AuthContext);
+  const toast = useToast();
+
+  const handleLogout = () => {
+    logout();
+    toast({
+      title: "Sesión cerrada correctamente",
+      status: "success",
+      duration: 2000,
+      isClosable: true,
+    });
+  };
 
   // Chakra Color Mode
   let fixedDisplay = "flex";
@@ -48,120 +70,36 @@ export default function Configurator(props) {
           <DrawerHeader pt="24px" px="24px">
             <DrawerCloseButton color="white" />
             <Text color="white" fontSize="xl" fontWeight="bold" mt="16px">
-              Vision UI Configurator
-            </Text>
-            <Text color="white" fontSize="md" mb="16px">
-              See your dashboard options.
+              {userData?.Nombre} {userData?.Apellido}
             </Text>
             <Separator />
           </DrawerHeader>
           <DrawerBody w="340px" ps="24px" pe="40px">
             <Flex flexDirection="column">
-              <Box
-                display={fixedDisplay}
-                justifyContent="space-between "
-                mb="20px"
-              >
-                <DarkMode>
-                  <Text color="white" fontSize="md" fontWeight="600" mb="4px">
-                    Navbar Fixed
-                  </Text>
-                  <Switch
-                    colorScheme="brand"
-                    isChecked={switched}
-                    onChange={(event) => {
-                      if (switched === true) {
-                        props.onSwitch(false);
-                        setSwitched(false);
-                      } else {
-                        props.onSwitch(true);
-                        setSwitched(true);
-                      }
-                    }}
-                  />
-                </DarkMode>
-              </Box>
               <Box>
                 <Box>
-                  <Link
-                    href="https://www.creative-tim.com/product/vision-ui-dashboard-chakra"
+                  <Button
                     w="100%"
                     mb="16px"
+                    bg="brand.200"
+                    color={colorButton}
+                    fontSize="xs"
+                    variant="brand"
+                    px="30px"
                   >
-                    <Button
-                      w="100%"
-                      mb="16px"
-                      bg="brand.200"
-                      color={colorButton}
-                      fontSize="xs"
-                      variant="brand"
-                      px="30px"
-                    >
-                      Free Download
-                    </Button>
-                  </Link>
-                  <Link
-                    href="https://demos.creative-tim.com/docs-vision-ui-dashboard-chakra/"
+                    Alguna Función
+                  </Button>
+                  <Button
+                    onClick={handleLogout}
                     w="100%"
+                    color={secondaryButtonColor}
+                    fontSize="xs"
+                    variant="outlineWhite"
+                    px="20px"
+                    mb="16px"
                   >
-                    <Button
-                      w="100%"
-                      color={secondaryButtonColor}
-                      fontSize="xs"
-                      variant="outlineWhite"
-                      px="20px"
-                      mb="16px"
-                    >
-                      <Text textDecorationColor="none">Documentation</Text>
-                    </Button>
-                  </Link>
-                </Box>
-                <Flex
-                  justifyContent="center"
-                  alignItems="center"
-                  w="100%"
-                  mb="16px"
-                >
-                  <GitHubButton
-                    href="https://github.com/creativetimofficial/vision-ui-dashboard-chakra"
-                    data-icon="octicon-star"
-                    data-show-count="true"
-                    aria-label="Star creativetimofficial/vision-ui-dashboard-chakra on GitHub"
-                  >
-                    Star
-                  </GitHubButton>
-                </Flex>
-                <Box w="100%">
-                  <Text color="white" mb="6px" textAlign="center">
-                    Thank you for sharing!
-                  </Text>
-                  <LightMode>
-                    <Flex justifyContent="center" alignContent="center">
-                      <Link
-                        isExternal="true"
-                        href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fvision-ui-dashboard-chakra&text=Check%20vision%20UI%20Dashboard%20made%20by%20%40CreativeTim%20and%20%40simmmple_web%20%23webdesign%20%23dashboard%20%23chakra"
-                      >
-                        <Button
-                          colorScheme="twitter"
-                          leftIcon={<FaTwitter />}
-                          me="10px"
-                        >
-                          <Text>Tweet</Text>
-                        </Button>
-                      </Link>
-                      <Link
-                        isExternal="true"
-                        href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.creative-tim.com%2Fproduct%2Fvision-ui-dashboard-chakra"
-                      >
-                        <Button
-                          colorScheme="facebook"
-                          leftIcon={<FaFacebook />}
-                        >
-                          <Text>Share</Text>
-                        </Button>
-                      </Link>
-                    </Flex>
-                  </LightMode>
+                    <Text textDecorationColor="none">Cerrar sesión</Text>
+                  </Button>
                 </Box>
               </Box>
             </Flex>

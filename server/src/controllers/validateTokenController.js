@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const jwtConfig = require("../config/jwt");
 
-function authMiddleware(req, res, next) {
+exports.validateToken = (req, res) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
@@ -12,11 +12,8 @@ function authMiddleware(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, jwtConfig.secret);
-    req.user = decoded;
-    next();
+    res.status(200).json({ message: "Token válido" });
   } catch (error) {
     res.status(401).json({ message: "Token inválido" });
   }
-}
-
-module.exports = authMiddleware;
+};

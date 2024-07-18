@@ -28,27 +28,80 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
+  useToast,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState, useEffect } from "react";
+
+// Hooks
+import useFetchData from "hooks/useFetchData";
+import useDeleteData from "hooks/useDeleteData";
 
 function TablesTableRow(props) {
   const {
-    logo,
-    name,
+    Id,
+    imagen,
+    Descripcion,
     email,
     subdomain,
-    domain,
-    status,
-    date,
+    Ubicacion,
+    En_Uso,
+    Depreciado,
     lastItem,
     Responsable,
-    ActivoNum,
+    Activo_Num,
     Tipo,
     Marca,
+    onViewMoreClick,
   } = props;
-  const textColor = useColorModeValue("gray.700", "white");
-  const bgStatus = useColorModeValue("gray.400", "#1a202c");
   const colorStatus = useColorModeValue("white", "gray.400");
+
+  const { data } = useFetchData(`http://localhost:4000/articulos/${Id}`);
+
+  const deleteUrl = "http://localhost:4000/articulos";
+  const { loading, error, deleteItem } = useDeleteData(deleteUrl);
+  const toast = useToast();
+
+  const handleDelete = async () => {
+    const success = await deleteItem(Id);
+
+    if (success) {
+      props.onDeleteSuccess(Id);
+      toast({
+        title: "Elemento eliminado",
+        description: `El elemento con ID ${Id} ha sido eliminado correctamente.`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      // Aquí podrías agregar más lógica después de la eliminación exitosa
+    } else {
+      toast({
+        title: "Error al eliminar",
+        description: `Hubo un problema al intentar eliminar el elemento con ID ${Id}. Por favor, intenta de nuevo más tarde.`,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      // Manejo de errores
+    }
+  };
+  const [enUsoChecked, setEnUsoChecked] = useState(false); // Estado inicial del checkbox 'En Uso'
+  const [depreciadoChecked, setDepreciadoChecked] = useState(false); // Estado inicial del checkbox 'Depreciado'
+
+  useEffect(() => {
+    if (data) {
+      setEnUsoChecked(data.En_Uso === 1);
+      setDepreciadoChecked(data.Depreciado === 1);
+    }
+  }, [data]);
+
+  const handleEnUsoChange = () => {
+    setEnUsoChecked(!enUsoChecked); // Invierte el estado actual del checkbox 'En Uso'
+  };
+
+  const handleDepreciadoChange = () => {
+    setDepreciadoChecked(!depreciadoChecked); // Invierte el estado actual del checkbox 'Depreciado'
+  };
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -72,7 +125,7 @@ function TablesTableRow(props) {
         >
           <Flex align="center" py=".8rem" minWidth="100%" flexWrap="nowrap">
             <Avatar
-              src={logo}
+              src={imagen}
               w="50px"
               borderRadius="12px"
               me="18px"
@@ -85,7 +138,7 @@ function TablesTableRow(props) {
                 fontWeight="normal"
                 minWidth="100%"
               >
-                {name}
+                {Descripcion}
               </Text>
               <Text fontSize="sm" color="gray.400" fontWeight="normal">
                 {email}
@@ -94,7 +147,7 @@ function TablesTableRow(props) {
                 {Responsable}
               </Text>
               <Text fontSize="sm" color="gray.400" fontWeight="normal">
-                {ActivoNum}
+                {Activo_Num}
               </Text>
               <Text fontSize="sm" color="gray.400" fontWeight="normal">
                 {Tipo}
@@ -113,7 +166,7 @@ function TablesTableRow(props) {
         >
           <Flex direction="column">
             <Text fontSize="sm" color="#fff" fontWeight="normal">
-              {domain}
+              {Ubicacion}
             </Text>
             <Text fontSize="sm" color="gray.400" fontWeight="normal">
               {subdomain}
@@ -122,31 +175,39 @@ function TablesTableRow(props) {
         </Td>
         <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
           <Badge
-            bg={status === "Disponible" ? "green.400" : "transparent"}
-            color={status === "Disponible" ? "white" : colorStatus}
+            bg={En_Uso === "Disponible" ? "green.400" : "transparent"}
+            color={En_Uso === "Disponible" ? "white" : colorStatus}
             fontSize="sm"
             p="3px 10px"
             borderRadius="8px"
-            border={status === "Disponible" ? "none" : "1px solid #fff"}
+            border={En_Uso === "Disponible" ? "none" : "1px solid #fff"}
             fontWeight="normal"
           >
-            {status}
+            {En_Uso}
           </Badge>
         </Td>
         <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
           <Text fontSize="sm" color="#fff" fontWeight="normal">
-            {date}
+            {Depreciado}
           </Text>
         </Td>
         <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
-          <Button p="0px" bg="transparent" variant="no-hover" onClick={onOpen}>
+          <Button
+            p="0px"
+            bg="transparent"
+            variant="no-hover"
+            onClick={() => {
+              onViewMoreClick(props.Id); // Aquí pasas el ID al hacer clic
+              onOpen();
+            }}
+          >
             <Text
               fontSize="sm"
               color="gray.400"
               fontWeight="bold"
               cursor="pointer"
             >
-              Editar
+              Ver Más
             </Text>
           </Button>
         </Td>
@@ -163,24 +224,24 @@ function TablesTableRow(props) {
           bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
           color="white"
         >
-          <ModalHeader>Editar Activo</ModalHeader>
+          <ModalHeader>Información de Activo</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel>Ubicación</FormLabel>
-              <Input ref={initialRef} />
+              <Input value={data?.Ubicacion} />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Activo #</FormLabel>
-              <Input />
+              <Input value={data?.Activo_Num} />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Tipo</FormLabel>
               <Select>
-                <option style={{ color: "black" }} value="Por Definir">
-                  Por Definir
+                <option style={{ color: "black" }} value={data?.Tipo}>
+                  {data?.Tipo}
                 </option>
                 <option
                   style={{ color: "black" }}
@@ -220,30 +281,37 @@ function TablesTableRow(props) {
 
             <FormControl mt={4}>
               <FormLabel>Marca</FormLabel>
-              <Input />
+              <Input value={data?.Marca} />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Modelo</FormLabel>
-              <Input />
+              <Input value={data?.Modelo} />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Descripción</FormLabel>
-              <Input />
+              <Input value={data?.Descripcion} />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Estado</FormLabel>
               <Stack spacing={5} direction="row">
-                <Checkbox colorScheme="orange">En Uso</Checkbox>
-                <Checkbox colorScheme="orange">Depreciado</Checkbox>
+                <Checkbox
+                  colorScheme="orange"
+                  isChecked={enUsoChecked}
+                  onChange={handleEnUsoChange}
+                >
+                  En Uso
+                </Checkbox>
+                <Checkbox
+                  colorScheme="orange"
+                  isChecked={depreciadoChecked}
+                  onChange={handleDepreciadoChange}
+                >
+                  Depreciado
+                </Checkbox>
               </Stack>
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Observaciones</FormLabel>
-              <Textarea maxH={130} />
             </FormControl>
           </ModalBody>
 
@@ -266,26 +334,27 @@ function TablesTableRow(props) {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete Customer
+              Eliminar Activo
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Are you sure? You can't undo this action afterwards.
+              Estás seguro que deseas eliminar este activo?
             </AlertDialogBody>
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onCloseAlert}>
-                Cancel
+                Cancelar
               </Button>
               <Button
                 colorScheme="red"
                 onClick={() => {
                   onCloseAlert();
                   onClose();
+                  handleDelete();
                 }}
                 ml={3}
               >
-                Delete
+                Eliminar
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

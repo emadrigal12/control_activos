@@ -49,43 +49,6 @@ export default function HeaderLinks(props) {
       alignItems="center"
       flexDirection="row"
     >
-      <InputGroup
-        cursor="pointer"
-        bg={inputBg}
-        borderRadius="15px"
-        borderColor="rgba(226, 232, 240, 0.3)"
-        w={{
-          sm: "128px",
-          md: "200px",
-        }}
-        me={{ sm: "auto", md: "20px" }}
-      >
-        <InputLeftElement
-          children={
-            <IconButton
-              bg="inherit"
-              borderRadius="inherit"
-              _hover="none"
-              _active={{
-                bg: "inherit",
-                transform: "none",
-                borderColor: "transparent",
-              }}
-              _focus={{
-                boxShadow: "none",
-              }}
-              icon={<SearchIcon color={searchIcon} w="15px" h="15px" />}
-            ></IconButton>
-          }
-        />
-        <Input
-          fontSize="xs"
-          py="11px"
-          color={mainText}
-          placeholder="Type here..."
-          borderRadius="inherit"
-        />
-      </InputGroup>
       <SidebarResponsive
         iconColor="gray.500"
         logoText={props.logoText}

@@ -3,6 +3,7 @@ import { jwtDecode } from "jwt-decode"; // Asegúrate de instalar esta dependenc
 
 const useUserData = () => {
   const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   const [id, setId] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -31,6 +32,8 @@ const useUserData = () => {
 
           const data = await response.json();
           setUser(`${data.Nombre} ${data.Apellido}`);
+          setUserData(data);
+          console.log(data);
         }
       } catch (error) {
         setError(error.message);
@@ -42,7 +45,7 @@ const useUserData = () => {
     fetchUserData();
   }, []);
 
-  return { user, id, loading, error };
+  return { user, id, loading, error, userData };
 };
 
 export default useUserData;

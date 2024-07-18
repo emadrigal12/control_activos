@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 
 const useSignIn = () => {
   const history = useHistory();
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   // Estados para el correo, contraseña y mensajes de error
   const [email, setEmail] = useState("");
@@ -72,8 +74,9 @@ const useSignIn = () => {
 
           // Almacenar el token en localStorage
           localStorage.setItem("token", result.token);
+          setIsAuthenticated(true);
 
-          history.push("/dashboard");
+          history.push("/admin/inicio");
         }
       } catch (error) {
         console.error("Error en la solicitud de inicio de sesión:", error);

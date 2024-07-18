@@ -5,6 +5,7 @@ import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import routes from "routes.js";
 import theme from "theme/themeAuth.js";
+import Dashboard from "./Admin";
 
 export default function Pages(props) {
   const { ...rest } = props;
@@ -38,7 +39,7 @@ export default function Pages(props) {
       <Box w="100%">
         <Switch>
           {getRoutes(routes)}
-          <Redirect from="/auth" to="/auth/login-page" />
+          <Redirect from="/auth" to="/auth/inicio" component={Dashboard} />
         </Switch>
       </Box>
     </ChakraProvider>

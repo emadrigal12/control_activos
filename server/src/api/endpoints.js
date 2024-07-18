@@ -4,8 +4,13 @@ const router = express.Router();
 const loginController = require("../controllers/loginController");
 const activoController = require("../controllers/activosController");
 const usuariosController = require("../controllers/usuariosController");
+const validateTokenController = require("../controllers/validateTokenController");
 
+// Hacer login
 router.post("/login", loginController.login);
+
+// Validación de token
+router.post("/validateToken", validateTokenController.validateToken); // Agrega el nuevo endpoint
 
 // Rutas protegidas
 

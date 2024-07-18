@@ -20,24 +20,26 @@ import {
   InputLeftElement,
   IconButton,
 } from "@chakra-ui/react";
-import { SearchIcon } from "@chakra-ui/icons";
 // Styles for the circular progressbar
-import medusa from "assets/img/cardimgfree.png";
+import userCover from "assets/img/cardimgfree.png";
 // Custom components
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import LineChart from "components/Charts/LineChart";
 import IconBox from "components/Icons/IconBox";
+
 // Icons
 import { MdQueryStats } from "react-icons/md";
+import { SearchIcon } from "@chakra-ui/icons";
+import { AiFillCheckCircle } from "react-icons/ai";
+import { BsArrowRight } from "react-icons/bs";
+import { IoCheckmarkDoneCircleSharp } from "react-icons/io5";
 
 import DashboardTableRow from "components/Tables/DashboardTableRow";
 import TimelineRow from "components/Tables/TimelineRow";
 import React from "react";
-import { AiFillCheckCircle } from "react-icons/ai";
-import { BsArrowRight } from "react-icons/bs";
-import { IoCheckmarkDoneCircleSharp } from "react-icons/io5";
+
 // Data
 import {
   lineChartDataDashboard,
@@ -45,7 +47,12 @@ import {
 } from "variables/charts";
 import { dashboardTableData, timelineData } from "variables/general";
 
+//Hooks
+import useUserData from "hooks/useUserData";
+
 export default function Dashboard() {
+  const { userData } = useUserData();
+
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "75px" }}>
       <Grid
@@ -57,7 +64,7 @@ export default function Dashboard() {
         <Card
           p="0px"
           gridArea={{ md: "1 / 1 / 2 / 3", "2xl": "auto" }}
-          bgImage={medusa}
+          bgImage={userCover}
           bgSize="cover"
           bgPosition="50%"
         >
@@ -74,7 +81,7 @@ export default function Dashboard() {
                   Bienvenido,
                 </Text>
                 <Text fontSize="28px" color="#fff" fontWeight="bold" mb="18px">
-                  Usuario de DCC
+                  {userData?.Nombre} {userData?.Apellido}
                 </Text>
                 <Text
                   fontSize="md"
@@ -355,7 +362,7 @@ export default function Dashboard() {
           <CardHeader mb="32px">
             <Flex direction="column">
               <Text fontSize="lg" color="#fff" fontWeight="bold" mb="6px">
-                Empresa Seleccionada
+                Activos Recientes
               </Text>
               <Flex align="center">
                 <Icon

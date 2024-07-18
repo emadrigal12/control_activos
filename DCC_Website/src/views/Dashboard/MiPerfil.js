@@ -22,7 +22,7 @@ import avatar2 from "assets/img/avatars/avatar2.png";
 import avatar3 from "assets/img/avatars/avatar3.png";
 import avatar4 from "assets/img/avatars/avatar4.png";
 import avatar6 from "assets/img/avatars/avatar6.png";
-import bgProfile from "assets/img/bgProfile.png";
+import bgProfile from "assets/img/bgProfile.jpg";
 import ProjectImage1 from "assets/img/ProjectImage1.png";
 import ProjectImage2 from "assets/img/ProjectImage2.png";
 import ProjectImage3 from "assets/img/ProjectImage3.png";
@@ -54,7 +54,11 @@ import {
   lineChartOptionsProfile2,
 } from "variables/charts";
 
+//Hooks
+import useUserData from "hooks/useUserData";
+
 function Profile() {
+  const { userData } = useUserData();
   return (
     <Flex direction="column" mt={{ sm: "25px", md: "0px" }}>
       <Box
@@ -111,60 +115,12 @@ function Profile() {
                   fontWeight="bold"
                   ms={{ sm: "8px", md: "0px" }}
                 >
-                  Mark Johnson
+                  {userData?.Nombre} {userData?.Apellido}
                 </Text>
                 <Text fontSize={{ sm: "sm", md: "md" }} color="gray.400">
-                  mark@simmmple.com
+                  {userData?.Username}
                 </Text>
               </Flex>
-            </Flex>
-            <Flex
-              direction={{ sm: "column", lg: "row" }}
-              w={{ sm: "100%", md: "50%", lg: "auto" }}
-            >
-              <Button
-                borderRadius="12px"
-                bg="brand.200"
-                _hover={{ opacity: "0.8" }}
-                _active={{ opacity: "0.9" }}
-                me={{ base: "none", lg: "20px" }}
-                leftIcon={<Icon color="white" as={FaCube} me="6px" />}
-              >
-                <Text fontSize="xs" color="#fff" fontWeight="bold">
-                  OVERVIEW
-                </Text>
-              </Button>
-              <Button
-                borderRadius="12px"
-                bg="transparent"
-                _hover={{
-                  bg: "brand.200",
-                }}
-                _active={{
-                  bg: "brand.200",
-                }}
-                me={{ base: "none", lg: "20px" }}
-                leftIcon={<Icon color="white" as={IoDocumentsSharp} me="6px" />}
-              >
-                <Text fontSize="xs" color="#fff" fontWeight="bold">
-                  TEAMS
-                </Text>
-              </Button>
-              <Button
-                borderRadius="12px"
-                bg="transparent"
-                _hover={{
-                  bg: "brand.200",
-                }}
-                _active={{
-                  bg: "brand.200",
-                }}
-                leftIcon={<Icon color="white" as={FaPenFancy} me="6px" />}
-              >
-                <Text fontSize="xs" color="#fff" fontWeight="bold">
-                  PROJECTS
-                </Text>
-              </Button>
             </Flex>
           </Flex>
         </Card>
@@ -186,197 +142,52 @@ function Profile() {
           h={{ sm: "270px", lg: "350px", xl: "410px" }}
           gridArea={{ xl: "1 / 1 / 2 / 2", "2xl": "auto" }}
         >
-          <Flex direction="column" h="100%">
+          <Flex
+            direction="column"
+            h="100%"
+            bg="rgba(45, 45, 45, 0.5)" // Fondo con efecto frost (blurred)
+            backdropFilter="blur(6px)" // Efecto de desenfoque en el fondo
+            borderRadius="lg" // Bordes redondeados
+            p={4}
+          >
             <Text color="#fff" fontSize="30px" fontWeight="bold" mb="3px">
-              Welcome back!
+              Transformando desafíos en oportunidades
             </Text>
             <Text color="#fff" fontSize="sm" mb="auto">
-              Nice to see you, Mark Johnson!
+              DCC Contabilidad, Activos & Consultoría
             </Text>
-            <Button
-              alignSelf="flex-start"
-              variant="no-hover"
-              bg="transparent"
-              p="0px"
-            >
-              <Text
-                fontSize="xs"
-                color="#fff"
-                me="5px"
-                cursor="pointer"
-                transition="all .3s ease"
-                _hover={{ me: "6px" }}
+            <Link href="https://dcccr.com/" target="_blank">
+              <Button
+                alignSelf="flex-start"
+                variant="no-hover"
+                bg="transparent"
+                p="0px"
               >
-                Tab to record
-              </Text>
-              <Icon
-                as={BsArrowRight}
-                w="13px"
-                h="13px"
-                color="#fff"
-                transition="all .3s ease"
-                cursor="pointer"
-                _hover={{ transform: "translateX(20%)" }}
-              />
-            </Button>
+                <Text
+                  fontSize="xs"
+                  color="#fff"
+                  me="5px"
+                  cursor="pointer"
+                  transition="all .3s ease"
+                  _hover={{ me: "6px" }}
+                >
+                  Visitar sitio web
+                </Text>
+
+                <Icon
+                  as={BsArrowRight}
+                  w="13px"
+                  h="13px"
+                  color="#fff"
+                  transition="all .3s ease"
+                  cursor="pointer"
+                  _hover={{ transform: "translateX(20%)" }}
+                />
+              </Button>
+            </Link>
           </Flex>
         </Card>
-        {/* Car Informations */}
-        <Card
-          p="16px"
-          maxH={{ lg: "410px" }}
-          maxW={{ sm: "325px", md: "725px", lg: "980px", xl: "100%" }}
-          gridArea={{ xl: "2 / 1 / 3 / 3", "2xl": "auto" }}
-        >
-          <CardHeader p="12px 5px" mb="12px">
-            <Flex direction="column">
-              <Text fontSize="lg" color="#fff" fontWeight="bold" mb="6px">
-                Car Informations
-              </Text>
-              <Text fontSize="sm" color="gray.400">
-                Hello, Mark Johnson! Your Car is ready.
-              </Text>
-            </Flex>
-          </CardHeader>
-          <CardBody w="100%">
-            <Flex w="100%" direction={{ sm: "column", md: "row" }}>
-              <Flex
-                direction="column"
-                align="center"
-                me={{ md: "16px", lg: "50px" }}
-                mb={{ sm: "12px", md: "0px" }}
-              >
-                <CircularProgress
-                  size={200}
-                  value={68}
-                  thickness={6}
-                  color="green.400"
-                  variant="vision"
-                >
-                  <CircularProgressLabel>
-                    <Flex direction="column" justify="center" align="center">
-                      <Text
-                        color="#fff"
-                        fontSize="36px"
-                        fontWeight="bold"
-                        mb="6px"
-                      >
-                        68%
-                      </Text>
-                      <Text color="gray.400" fontSize="sm">
-                        Current load
-                      </Text>
-                    </Flex>
-                  </CircularProgressLabel>
-                </CircularProgress>
-                <Flex direction="column" mt="18px" align="center">
-                  <Text color="#fff" fontSize="lg" fontWeight="bold" mb="2px">
-                    0h 58 min
-                  </Text>
-                  <Text color="gray.500" fontSize="sm">
-                    Time to full charge
-                  </Text>
-                </Flex>
-              </Flex>
-              <Grid
-                templateColumns={{ sm: "1fr", md: "repeat(2, 1fr)" }}
-                gap="24px"
-                w="100%"
-                alignSelf="flex-start"
-              >
-                <Flex
-                  align="center"
-                  p="18px"
-                  justify="space-between"
-                  bg="linear-gradient(126.97deg, rgba(61, 61, 61, 1) 28.26%, rgba(61, 61, 61, 1) 91.2%)"
-                  borderRadius="20px"
-                >
-                  <Flex direction="column" me="auto">
-                    <Text fontSize="xs" color="white" mb="3px">
-                      Battery Health
-                    </Text>
-                    <Text color="#fff" fontSize="22px" fontWeight="bold">
-                      76%
-                    </Text>
-                  </Flex>
-                  <IconBox bg="brand.200" w="56px" h="56px" direction="column">
-                    <CarIcon w="28px" h="28px" />
-                    <FulgerWhiteIcon
-                      w="8px"
-                      h="11px"
-                      transform="rotate(90deg)"
-                    />
-                  </IconBox>
-                </Flex>
-                <Flex
-                  align="center"
-                  p="18px"
-                  pe="0px"
-                  justify="space-between"
-                  bg="linear-gradient(126.97deg, rgba(61, 61, 61, 1) 28.26%, rgba(61, 61, 61, 1) 91.2%)"
-                  borderRadius="20px"
-                >
-                  <Flex direction="column" me="auto">
-                    <Text fontSize="xs" color="white" mb="3px">
-                      Efficiency
-                    </Text>
-                    <Text color="#fff" fontSize="22px" fontWeight="bold">
-                      +20%
-                    </Text>
-                  </Flex>
-                  <Box maxH="75px">
-                    <LineChart
-                      lineChartData={lineChartDataProfile1}
-                      lineChartOptions={lineChartOptionsProfile1}
-                    />
-                  </Box>
-                </Flex>
-                <Flex
-                  align="center"
-                  p="18px"
-                  justify="space-between"
-                  bg="linear-gradient(126.97deg, rgba(61, 61, 61, 1) 28.26%, rgba(61, 61, 61, 1) 91.2%)"
-                  borderRadius="20px"
-                >
-                  <Flex direction="column" me="auto">
-                    <Text fontSize="xs" color="white" mb="3px">
-                      Consumption
-                    </Text>
-                    <Text color="#fff" fontSize="22px" fontWeight="bold">
-                      163W/km
-                    </Text>
-                  </Flex>
-                  <IconBox bg="brand.200" w="56px" h="56px">
-                    <FulgerWhiteIcon w="24px" h="24px" color="#fff" />
-                  </IconBox>
-                </Flex>
-                <Flex
-                  align="center"
-                  p="18px"
-                  pe="0px"
-                  justify="space-between"
-                  bg="linear-gradient(126.97deg, rgba(61, 61, 61, 1) 28.26%, rgba(61, 61, 61, 1) 91.2%)"
-                  borderRadius="20px"
-                >
-                  <Flex direction="column" me="auto">
-                    <Text fontSize="xs" color="white" mb="3px">
-                      This Week
-                    </Text>
-                    <Text color="#fff" fontSize="22px" fontWeight="bold">
-                      1.342km
-                    </Text>
-                  </Flex>
-                  <Box maxH="75px">
-                    <LineChart
-                      lineChartData={lineChartDataProfile2}
-                      lineChartOptions={lineChartOptionsProfile2}
-                    />
-                  </Box>
-                </Flex>
-              </Grid>
-            </Flex>
-          </CardBody>
-        </Card>
+
         {/* Profile Information */}
         <Card
           p="16px"
@@ -386,32 +197,34 @@ function Profile() {
         >
           <CardHeader p="12px 5px" mb="12px">
             <Text fontSize="lg" color="#fff" fontWeight="bold">
-              Profile Information
+              Información del Perfil
             </Text>
           </CardHeader>
           <CardBody px="5px">
             <Flex direction="column">
-              <Text fontSize="sm" color={"gray.400"} fontWeight="400" mb="15px">
-                Hi, I’m Mark Johnson, Decisions: If you can’t decide, the answer
-                is no. If two equally difficult paths, choose the one more
-                painful in the short term (pain avoidance is creating an
-                illusion of equality).
-              </Text>
               <Separator mb="30px" />
               <Flex align="center" mb="18px">
                 <Text fontSize="sm" color={"gray.400"} me="10px">
-                  Full Name:{" "}
+                  Nombre:{" "}
                 </Text>
                 <Text fontSize="sm" color="#fff" fontWeight="400">
-                  Mark Johnson
+                  {userData?.Nombre}
                 </Text>
               </Flex>
               <Flex align="center" mb="18px">
                 <Text fontSize="sm" color={"gray.400"} me="10px">
-                  Mobile:{" "}
+                  Apellido:{" "}
                 </Text>
                 <Text fontSize="sm" color="#fff" fontWeight="400">
-                  (44) 123 1234 123
+                  {userData?.Apellido}
+                </Text>
+              </Flex>
+              <Flex align="center" mb="18px">
+                <Text fontSize="sm" color={"gray.400"} me="10px">
+                  Teléfono:{" "}
+                </Text>
+                <Text fontSize="sm" color="#fff" fontWeight="400">
+                  (+506) 4567-8901
                 </Text>
               </Flex>
               <Flex align="center" mb="18px">
@@ -419,85 +232,34 @@ function Profile() {
                   Email:{" "}
                 </Text>
                 <Text fontSize="sm" color="#fff" fontWeight="400">
-                  mark@simmmple.com
+                  {userData?.Username}
                 </Text>
               </Flex>
               <Flex align="center" mb="18px">
                 <Text fontSize="sm" color={"gray.400"} me="10px">
-                  Location:{" "}
+                  Provincia:{" "}
                 </Text>
                 <Text fontSize="sm" color="#fff" fontWeight="400">
-                  United States
+                  San José
                 </Text>
-              </Flex>
-              <Flex align="center" mb="18px">
-                <Text fontSize="sm" color={"gray.400"} me="10px">
-                  Social Media:{" "}
-                </Text>
-                <Flex>
-                  <Link
-                    href="#"
-                    color="teal.300"
-                    fontSize="lg"
-                    me="10px"
-                    _hover={{ color: "teal.300" }}
-                  >
-                    <Icon color="white" as={FaFacebook} w="12px" h="12px" />
-                  </Link>
-                  <Link
-                    href="#"
-                    color="teal.300"
-                    fontSize="lg"
-                    me="10px"
-                    _hover={{ color: "teal.300" }}
-                  >
-                    <Icon color="white" as={FaInstagram} w="12px" h="12px" />
-                  </Link>
-                  <Link
-                    href="#"
-                    color="teal.300"
-                    fontSize="lg"
-                    me="10px"
-                    _hover={{ color: "teal.300" }}
-                  >
-                    <Icon color="white" as={FaTwitter} w="12px" h="12px" />
-                  </Link>
-                </Flex>
               </Flex>
             </Flex>
           </CardBody>
         </Card>
-      </Grid>
-      <Grid templateColumns={{ sm: "1fr", xl: "1fr 3fr" }} gap="20px">
         <DarkMode>
           {/* Platform Settings */}
-          <Card p="16px" gridArea={{ xl: "1 / 1 / 2 / 2" }}>
+          <Card p="16px">
             <CardHeader p="12px 5px" mb="12px">
               <Text fontSize="lg" color="#fff" fontWeight="bold">
-                Platform Settings
+                Mis Preferencias
               </Text>
             </CardHeader>
             <CardBody px="5px">
               <Flex direction="column">
-                <Text fontSize="10px" color={"gray.400"} mb="20px">
-                  ACCOUNT
+                <Text fontSize="10px" color={"gray.400"} mb="15px">
+                  CUENTA
                 </Text>
-                <Flex align="center" mb="20px">
-                  <Switch
-                    variant="brand"
-                    colorScheme="brand"
-                    me="10px"
-                    defaultChecked
-                  />
-                  <Text
-                    noOfLines={1}
-                    fontSize="sm"
-                    color={"gray.400"}
-                    fontWeight="400"
-                  >
-                    Email me when someone follows me
-                  </Text>
-                </Flex>
+
                 <Flex align="center" mb="20px">
                   <Switch colorScheme="brand" me="10px" />
                   <Text
@@ -506,7 +268,7 @@ function Profile() {
                     color={"gray.400"}
                     fontWeight="400"
                   >
-                    Email me when someone answers on my post
+                    Recibir un correo electrónico cuando alguien me mencione
                   </Text>
                 </Flex>
                 <Flex align="center" mb="20px">
@@ -517,11 +279,11 @@ function Profile() {
                     color={"gray.400"}
                     fontWeight="400"
                   >
-                    Email me when someone mentions me
+                    Recibir un correo electrónico sobre mis actividades
                   </Text>
                 </Flex>
                 <Text fontSize="10px" color={"gray.400"} m="6px 0px 20px 0px">
-                  APPLICATION
+                  APLICACIÓN
                 </Text>
                 <Flex align="center" mb="20px">
                   <Switch colorScheme="brand" me="10px" />
@@ -531,7 +293,7 @@ function Profile() {
                     color={"gray.400"}
                     fontWeight="400"
                   >
-                    New launches and projects
+                    Nuevos proyectos creados
                   </Text>
                 </Flex>
                 <Flex align="center" mb="20px">
@@ -542,7 +304,7 @@ function Profile() {
                     color={"gray.400"}
                     fontWeight="400"
                   >
-                    Monthly product changes
+                    Cambios en la aplicación
                   </Text>
                 </Flex>
                 <Flex align="center" mb="20px">
@@ -553,7 +315,7 @@ function Profile() {
                     color={"gray.400"}
                     fontWeight="400"
                   >
-                    Subscribe to newsletter
+                    Subscribirse al boletín informativo
                   </Text>
                 </Flex>
                 <Flex align="center" mb="20px">
@@ -564,22 +326,24 @@ function Profile() {
                     color={"gray.400"}
                     fontWeight="400"
                   >
-                    Receive mails weekly
+                    Recibir correos semanales
                   </Text>
                 </Flex>
               </Flex>
             </CardBody>
           </Card>
         </DarkMode>
+      </Grid>
+      <Grid templateColumns={{ sm: "1fr", xl: "0fr 0fr" }} gap="0px">
         {/* Projects */}
         <Card gridArea={{ xl: "1 /2 /2/ 5" }} p="16px">
           <CardHeader p="12px 5px" mb="12px">
             <Flex direction="column">
               <Text fontSize="lg" color="#fff" fontWeight="bold">
-                Projects
+                Tus Proyectos Recientes
               </Text>
               <Text fontSize="sm" color={"gray.400"} fontWeight="400">
-                Architects design houses
+                Proyectos en los que has trabajado
               </Text>
             </Flex>
           </CardHeader>
@@ -595,29 +359,26 @@ function Profile() {
                 md: "1fr 1fr",
                 xl: "1fr",
               }}
-              gap="24px"
+              gap="50px"
             >
               <Flex direction="column">
                 <Box mb="20px" position="relative" borderRadius="20px">
-                  <Image src={ProjectImage1} borderRadius="20px" />
+                  <Image
+                    src={ProjectImage1}
+                    borderRadius="20px"
+                    w={450}
+                    h={250}
+                    objectFit="cover"
+                  />
                 </Box>
                 <Flex direction="column">
                   <Text fontSize="10px" color={"gray.400"} mb="10px">
-                    Project #1
+                    Proyecto #1
                   </Text>
                   <Text fontSize="xl" color="#fff" fontWeight="bold" mb="10px">
-                    Modern
+                    Microsoft
                   </Text>
-                  <Text
-                    fontSize="sm"
-                    color={"gray.400"}
-                    fontWeight="400"
-                    mb="20px"
-                  >
-                    As Uber works through a huge amount of internal management
-                    turmoil.
-                  </Text>
-                  <Flex justifyContent="space-between" mt="auto">
+                  <Flex justifyContent="space-between" mt="auto" pt={2}>
                     <Button
                       variant="outlineWhite"
                       minW="110px"
@@ -625,136 +386,47 @@ function Profile() {
                       fontSize="10px"
                       px="1.5rem"
                     >
-                      VIEW ALL
+                      VER TODOS
                     </Button>
-                    <AvatarGroup size="xs">
-                      <Avatar
-                        borderColor="#121241"
-                        name="Ryan Florence"
-                        src={avatar6}
-                      />
-                      <Avatar
-                        borderColor="#121241"
-                        name="Segun Adebayo"
-                        src={avatar2}
-                      />
-                      <Avatar
-                        borderColor="#121241"
-                        name="Kent Dodds"
-                        src={avatar3}
-                      />
-                      <Avatar
-                        borderColor="#121241"
-                        name="Prosper Otemuyiwa"
-                        src={avatar4}
-                      />
-                    </AvatarGroup>
                   </Flex>
                 </Flex>
               </Flex>
               <Flex direction="column">
                 <Box mb="20px" position="relative" borderRadius="20px">
-                  <Image src={ProjectImage2} borderRadius="20px" />
+                  <Image
+                    src={ProjectImage2}
+                    borderRadius="20px"
+                    w={450}
+                    h={250}
+                    objectFit="cover"
+                  />
                 </Box>
                 <Flex direction="column">
                   <Text fontSize="10px" color={"gray.400"} mb="10px">
                     Project #2
                   </Text>
                   <Text fontSize="xl" color="#fff" fontWeight="bold" mb="10px">
-                    Scandinavian
+                    BRIDGESTONE
                   </Text>
-                  <Text fontSize="sm" color={"gray.400"} mb="20px">
-                    Music is something that every person has his or her own
-                    specific opinion about.
-                  </Text>
-                  <Flex justifyContent="space-between" mt="auto">
-                    <Button
-                      variant="outlineWhite"
-                      minW="110px"
-                      h="36px"
-                      fontSize="10px"
-                      px="1.5rem"
-                    >
-                      VIEW ALL
-                    </Button>
-                    <AvatarGroup size="xs">
-                      <Avatar
-                        borderColor="#121241"
-                        name="Ryan Florence"
-                        src={avatar6}
-                      />
-                      <Avatar
-                        borderColor="#121241"
-                        name="Segun Adebayo"
-                        src={avatar2}
-                      />
-                      <Avatar
-                        borderColor="#121241"
-                        name="Kent Dodds"
-                        src={avatar3}
-                      />
-                      <Avatar
-                        borderColor="#121241"
-                        name="Prosper Otemuyiwa"
-                        src={avatar4}
-                      />
-                    </AvatarGroup>
-                  </Flex>
                 </Flex>
               </Flex>
               <Flex direction="column" h="100%">
                 <Box mb="20px" position="relative" borderRadius="20px">
-                  <Image src={ProjectImage3} borderRadius="20px" />
+                  <Image
+                    src={ProjectImage3}
+                    borderRadius="20px"
+                    w={450}
+                    h={250}
+                    objectFit="cover"
+                  />
                 </Box>
                 <Flex direction="column">
                   <Text fontSize="10px" color={"gray.400"} mb="10px">
                     Project #3
                   </Text>
                   <Text fontSize="xl" color="#fff" fontWeight="bold" mb="10px">
-                    Minimalist
+                    Grupo ICE
                   </Text>
-                  <Text
-                    fontSize="sm"
-                    color={"gray.400"}
-                    fontWeight="400"
-                    mb="20px"
-                  >
-                    Different people have different taste, especially various
-                    types of music.
-                  </Text>
-                  <Flex justifyContent="space-between" mt="auto">
-                    <Button
-                      variant="outlineWhite"
-                      minW="110px"
-                      h="36px"
-                      fontSize="10px"
-                      px="1.5rem"
-                    >
-                      VIEW ALL
-                    </Button>
-                    <AvatarGroup size="xs">
-                      <Avatar
-                        borderColor="#121241"
-                        name="Ryan Florence"
-                        src={avatar6}
-                      />
-                      <Avatar
-                        borderColor="#121241"
-                        name="Segun Adebayo"
-                        src={avatar2}
-                      />
-                      <Avatar
-                        borderColor="#121241"
-                        name="Kent Dodds"
-                        src={avatar3}
-                      />
-                      <Avatar
-                        borderColor="#121241"
-                        name="Prosper Otemuyiwa"
-                        src={avatar4}
-                      />
-                    </AvatarGroup>
-                  </Flex>
                 </Flex>
               </Flex>
             </Grid>

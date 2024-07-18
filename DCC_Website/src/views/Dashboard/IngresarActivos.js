@@ -26,8 +26,6 @@ import CardHeader from "components/Card/CardHeader.js";
 import GradientBorder from "components/GradientBorder/GradientBorder";
 import BillingRow from "components/Tables/BillingRow";
 
-// Icons
-
 // Data
 import { billingData } from "variables/general";
 
