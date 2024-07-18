@@ -3,11 +3,11 @@ import {
   AvatarGroup,
   Flex,
   Icon,
-  Progress,
   Td,
   Text,
   Tr,
   useColorModeValue,
+  Button,
 } from "@chakra-ui/react";
 import React from "react";
 
@@ -52,19 +52,34 @@ function DashboardTableRow(props) {
       </Td>
       <Td borderBottomColor="#56577A" border={lastItem ? "none" : null}>
         <Flex direction="column">
-          <Text
-            fontSize="sm"
-            color="#fff"
-            fontWeight="bold"
-            pb=".2rem"
-          >{`${progression}%`}</Text>
-          <Progress
-            colorScheme="brand"
-            h="3px"
-            bg="#681D08"
-            value={progression}
-            borderRadius="30px"
-          />
+          <Button
+            p="0px"
+            colorScheme="orange"
+            size="sm"
+            direction="row"
+            align="center"
+            maxW={"100px"}
+            variant="outline"
+            spacing={4}
+            _hover={{ opacity: "0.8" }}
+            _active={{ opacity: "0.9" }}
+          >
+            Seleccionar
+          </Button>
+        </Flex>
+      </Td>
+      <Td borderBottomColor="#56577A" border={lastItem ? "none" : null}>
+        <Flex direction="column">
+          <Button p="0px" bg="transparent" variant="no-hover">
+            <Text
+              fontSize="sm"
+              color="gray.400"
+              fontWeight="bold"
+              cursor="pointer"
+            >
+              Editar
+            </Text>
+          </Button>
         </Flex>
       </Td>
     </Tr>

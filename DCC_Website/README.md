@@ -20,10 +20,6 @@
      yarn install
      ```
 
-### Demo
-
-- Explore the live demo and preview all pages of the dashboard: [View Demo](https://demos.creative-tim.com/vision-ui-dashboard-chakra).
-
 ### Browser Support
 
 - Officially supports the last two versions of Chrome, Firefox, Edge, Safari, and Opera.

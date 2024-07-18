@@ -70,12 +70,6 @@ function BillingRow(props) {
               {estado}
             </Text>
           </Text>
-          <Text color="gray.400" fontSize="xs">
-            Observaciones:{" "}
-            <Text as="span" color="gray.500">
-              {observaciones}
-            </Text>
-          </Text>
         </Flex>
       </Flex>
     </Box>

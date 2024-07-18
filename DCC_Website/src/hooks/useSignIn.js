@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { AuthContext } from "./AuthContext";
 
 const useSignIn = () => {
   const history = useHistory();
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   // Estados para el correo, contraseña y mensajes de error
   const [email, setEmail] = useState("");
@@ -42,20 +44,43 @@ const useSignIn = () => {
   };
 
   // Función para manejar el inicio de sesión
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     if (handleValidation()) {
       setGeneralError("");
-      // Aquí iría la lógica real para iniciar sesión, este es un ejemplo:
-      let response = true; // Simulación de respuesta
-      if (response) {
-        console.log("Iniciando sesión con:");
-        console.log("Correo:", email);
-        console.log("Contraseña:", password);
-        console.log("Inicio de sesión exitoso");
-        history.push("/dashboard");
-      } else {
-        console.log("Error al iniciar sesión");
-        setGeneralError("Correo o contraseña incorrectos");
+      const data = {
+        username: email,
+        password: password,
+      };
+
+      try {
+        const response = await fetch("http://localhost:4000/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const result = await response.json();
+
+        if (result.message && result.message === "Invalid user") {
+          setGeneralError("Correo o contraseña incorrectos");
+        } else {
+          console.log("Inicio de sesión exitoso");
+
+          // Almacenar el token en localStorage
+          localStorage.setItem("token", result.token);
+          setIsAuthenticated(true);
+
+          history.push("/admin/inicio");
+        }
+      } catch (error) {
+        console.error("Error en la solicitud de inicio de sesión:", error);
+        setGeneralError("Error en la solicitud de inicio de sesión");
       }
     }
   };

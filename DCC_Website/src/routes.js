@@ -1,8 +1,8 @@
 // import
-import Dashboard from "views/Dashboard/Dashboard.js";
-import Tables from "views/Dashboard/Tables.js";
-import Billing from "views/Dashboard/Billing.js";
-import Profile from "views/Dashboard/Profile.js";
+import Inicio from "views/Dashboard/Inicio.js";
+import GestionarActivos from "views/Dashboard/GestionarActivos.js";
+import IngresarActivos from "views/Dashboard/IngresarActivos.js";
+import MiPerfil from "views/Dashboard/MiPerfil.js";
 import SignIn from "views/Pages/SignIn.js";
 
 import {
@@ -19,28 +19,28 @@ var dashRoutes = [
     path: "/inicio",
     name: "Inicio",
     icon: <HomeIcon color="inherit" />,
-    component: Dashboard,
+    component: Inicio,
     layout: "/admin",
   },
   {
     path: "/gestion-activos",
     name: "Gestión de Activos",
     icon: <StatsIcon color="inherit" />,
-    component: Tables,
+    component: GestionarActivos,
     layout: "/admin",
   },
   {
     path: "/ingresar-activos",
     name: "Ingresar Activos",
     icon: <DocumentIcon color="inherit" />,
-    component: Billing,
+    component: IngresarActivos,
     layout: "/admin",
   },
   {
     path: "/sincronizar-datos",
     name: "Sincronizar Datos",
     icon: <RocketIcon color="inherit" />,
-    component: Billing,
+    component: IngresarActivos,
     layout: "/admin",
   },
   {
@@ -53,7 +53,7 @@ var dashRoutes = [
         name: "Mi Perfil",
         icon: <PersonIcon color="inherit" />,
         secondaryNavbar: true,
-        component: Profile,
+        component: MiPerfil,
         layout: "/admin",
       },
       {
@@ -61,7 +61,7 @@ var dashRoutes = [
         name: "Ayuda",
         icon: <HelpIcon color="inherit" />,
         secondaryNavbar: true,
-        component: Profile,
+        component: MiPerfil,
         layout: "/admin",
       },
       {
