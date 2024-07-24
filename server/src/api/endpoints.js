@@ -3,6 +3,7 @@ const authMiddleware = require("../middleware/auth");
 const router = express.Router();
 const loginController = require("../controllers/loginController");
 const activoController = require("../controllers/activosController");
+const proyectoController = require('../controllers/proyectosController');
 const usuariosController = require("../controllers/usuariosController");
 const validateTokenController = require("../controllers/validateTokenController");
 
@@ -37,14 +38,20 @@ router.delete(
   authMiddleware,
   activoController.eliminarArticulo
 );
+
+
+//Perfil
 router.get(
   "/usuario/:id",
   authMiddleware,
   usuariosController.obtenerUsuarioPorId
 );
 
-//Perfil
-
 //Proyectos
+router.post('/proyectos', authMiddleware, proyectoController.crearProyecto);
+router.get('/proyectos', authMiddleware, proyectoController.obtenerProyectos);
+router.put('/proyectos/:id', authMiddleware, proyectoController.actualizarProyecto);
+router.post('/proyectos/asignar-activo', authMiddleware, proyectoController.asignarActivoAProyecto);
+router.put('/proyectos/:id/finalizar', authMiddleware, proyectoController.finalizarProyecto);
 
 module.exports = router;
