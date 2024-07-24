@@ -6,6 +6,8 @@ const activoController = require("../controllers/activosController");
 const proyectoController = require('../controllers/proyectosController');
 const usuariosController = require("../controllers/usuariosController");
 const validateTokenController = require("../controllers/validateTokenController");
+const reporteController = require('../controllers/reportesController');
+
 
 // Hacer login
 router.post("/login", loginController.login);
@@ -53,5 +55,13 @@ router.get('/proyectos', authMiddleware, proyectoController.obtenerProyectos);
 router.put('/proyectos/:id', authMiddleware, proyectoController.actualizarProyecto);
 router.post('/proyectos/asignar-activo', authMiddleware, proyectoController.asignarActivoAProyecto);
 router.put('/proyectos/:id/finalizar', authMiddleware, proyectoController.finalizarProyecto);
+
+
+//Reportes
+router.get('/reportes/estado-proyectos-activos', authMiddleware, reporteController.obtenerReporteEstadoProyectosYActivos);
+router.get('/reportes/utilizacion-activos', authMiddleware, reporteController.obtenerReporteUtilizacionActivos);
+router.get('/reportes/estado-proyectos-activos/excel', authMiddleware, reporteController.exportarReporteExcel);
+router.get('/reportes/estado-proyectos-activos/pdf', authMiddleware, reporteController.exportarReportePDF);
+
 
 module.exports = router;
