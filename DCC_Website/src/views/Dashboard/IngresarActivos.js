@@ -86,7 +86,7 @@ function Billing() {
       setErrors(newErrors);
     } else {
       setErrors({});
-      mutate(formData);
+      mutate({ data: formData, url: "http://localhost:4000/articulos" });
     }
   };
 

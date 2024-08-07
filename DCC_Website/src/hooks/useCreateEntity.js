@@ -1,10 +1,9 @@
 import { useMutation } from "react-query";
 import { useToast } from "@chakra-ui/react";
 
-const createEntity = async (data) => {
-  console.log("Objeto a crear:", data);
+const createEntity = async ({ data, url }) => {
   const token = localStorage.getItem("token");
-  const response = await fetch("http://localhost:4000/articulos", {
+  const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

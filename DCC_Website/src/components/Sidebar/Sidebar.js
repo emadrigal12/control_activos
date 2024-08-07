@@ -48,7 +48,7 @@ function Sidebar(props) {
     let inactiveColor = "white";
     let sidebarActiveShadow = "none";
 
-    return routes.map((prop, key) => {
+    return routes.map((prop, index) => {
       if (prop.redirect) {
         return null;
       }
@@ -56,7 +56,7 @@ function Sidebar(props) {
         var st = {};
         st[prop["state"]] = !state[prop.state];
         return (
-          <>
+          <React.Fragment key={`category-${index}`}>
             <Text
               color={activeColor}
               fontWeight="bold"
@@ -75,11 +75,11 @@ function Sidebar(props) {
                 : prop.name}
             </Text>
             {createLinks(prop.views)}
-          </>
+          </React.Fragment>
         );
       }
       return (
-        <NavLink to={prop.layout + prop.path}>
+        <NavLink to={prop.layout + prop.path} key={`link-${index}`}>
           {activeRoute(prop.layout + prop.path) === "active" ? (
             <Button
               boxSize="initial"

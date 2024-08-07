@@ -24,7 +24,6 @@ export const AuthProvider = ({ children }) => {
           if (response.ok) {
             setIsAuthenticated(true);
             setIsLoading(false); // Indicar que la carga ha finalizado correctamente
-            console.log("Token válido");
           } else {
             setIsAuthenticated(false);
             setIsLoading(false); // Indicar que la carga ha finalizado, aunque no se autentique

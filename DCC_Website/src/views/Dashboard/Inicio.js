@@ -19,9 +19,23 @@ import {
   InputGroup,
   InputLeftElement,
   IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  FormControl,
+  FormLabel,
+  useDisclosure,
+  Select,
+  useToast,
 } from "@chakra-ui/react";
+
 // Styles for the circular progressbar
 import userCover from "assets/img/cardimgfree.png";
+
 // Custom components
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
@@ -34,11 +48,10 @@ import { MdQueryStats } from "react-icons/md";
 import { SearchIcon } from "@chakra-ui/icons";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { BsArrowRight } from "react-icons/bs";
-import { IoCheckmarkDoneCircleSharp } from "react-icons/io5";
 
 import DashboardTableRow from "components/Tables/DashboardTableRow";
 import TimelineRow from "components/Tables/TimelineRow";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 // Data
 import {
@@ -49,9 +62,92 @@ import { dashboardTableData, timelineData } from "variables/general";
 
 //Hooks
 import useUserData from "hooks/useUserData";
+import useFetchData from "hooks/useFetchData";
+import { useCreateEntity } from "hooks/useCreateEntity";
 
 export default function Dashboard() {
+  const toast = useToast();
+  // USO DEL HOOK PARA OBTENER LOS DATOS DEL USUARIO
   const { userData } = useUserData();
+
+  // USO DEL HOOK PARA OBTENER TODOS LOS PROYECTOS
+  const { data: projectsData, refetchData } = useFetchData(
+    "http://localhost:4000/proyectos"
+  );
+
+  const [formData, setFormData] = React.useState({
+    Descripcion: "",
+    Fecha_Inicio: "",
+    Fecha_Fin: "",
+  });
+
+  const handleRefetchData = (deletedId) => {
+    console.log("Haciendo Refetch");
+    refetchData();
+  };
+
+  // USO DEL HOOK PARA CREAR UN NUEVO PROYECTO
+  const resetForm = () => {
+    setFormData((prevData) => ({
+      ...prevData,
+      Descripcion: "",
+      Fecha_Inicio: "",
+      Fecha_Fin: "",
+    }));
+  };
+
+  const { mutate, isLoading } = useCreateEntity(resetForm);
+
+  const handleSave = async () => {
+    const newProject = {
+      ...formData,
+      Estado: 1,
+    };
+    if (
+      formData.Descripcion === "" ||
+      formData.Fecha_Inicio === "" ||
+      formData.Fecha_Fin === ""
+    ) {
+      toast({
+        title: "Campos vacíos",
+        description: "Por favor, llena todos los campos",
+        status: "error",
+        duration: 2500,
+        isClosable: true,
+      });
+      return;
+    }
+    mutate(
+      { data: newProject, url: "http://localhost:4000/proyectos" },
+      {
+        onSuccess: () => {
+          handleRefetchData();
+        },
+      }
+    );
+    onClose();
+  };
+
+  // Maneja los cambios en los inputs del formulario
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  // Modals
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
+  const initialRef = React.useRef(null);
+  const finalRef = React.useRef(null);
+
+  const handleEditProyectClick = (id) => {};
 
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "75px" }}>
@@ -229,21 +325,7 @@ export default function Dashboard() {
                 <Text fontSize="lg" color="#fff" fontWeight="bold" pb="8px">
                   Proyectos Recientes
                 </Text>
-                <Flex align="center">
-                  <Icon
-                    as={IoCheckmarkDoneCircleSharp}
-                    color="teal.300"
-                    w={4}
-                    h={4}
-                    pe="3px"
-                  />
-                  <Text fontSize="sm" color="gray.400" fontWeight="normal">
-                    <Text fontWeight="bold" as="span">
-                      18
-                    </Text>{" "}
-                    nuevos este mes.
-                  </Text>
-                </Flex>
+
                 <Flex align="center" mt={3}>
                   <InputGroup
                     cursor="pointer"
@@ -278,13 +360,14 @@ export default function Dashboard() {
                       fontSize="xs"
                       py="11px"
                       color="gray.400"
-                      placeholder="Buscar empresa..."
+                      placeholder="Buscar proyecto..."
                       borderRadius="inherit"
                     />
                   </InputGroup>
                 </Flex>
               </Flex>
               <Button
+                onClick={onOpen}
                 borderRadius="12px"
                 bg="brand.200"
                 _hover={{ opacity: "0.8" }}
@@ -312,21 +395,21 @@ export default function Dashboard() {
                     fontFamily="Plus Jakarta Display"
                     borderBottomColor="#56577A"
                   >
-                    Empresa
+                    Nombre
                   </Th>
                   <Th
                     color="gray.400"
                     fontFamily="Plus Jakarta Display"
                     borderBottomColor="#56577A"
                   >
-                    Responsables
+                    Fecha de Inicio
                   </Th>
                   <Th
                     color="gray.400"
                     fontFamily="Plus Jakarta Display"
                     borderBottomColor="#56577A"
                   >
-                    Activos
+                    Fecha de Finalización
                   </Th>
                   <Th
                     color="gray.400"
@@ -341,15 +424,17 @@ export default function Dashboard() {
                 </Tr>
               </Thead>
               <Tbody>
-                {dashboardTableData.map((row, index, arr) => {
+                {projectsData.map((row, index, arr) => {
                   return (
                     <DashboardTableRow
-                      name={row.name}
+                      Id={row?.Id}
+                      Descripcion={row?.Descripcion}
                       logo={row.logo}
-                      members={row.members}
-                      budget={row.budget}
+                      Fecha_Inicio={row.Fecha_Inicio}
+                      Fecha_Fin={row.Fecha_Fin}
                       progression={row.progression}
                       lastItem={index === arr.length - 1 ? true : false}
+                      onEditClick={() => handleEditProyectClick(row.Id)}
                     />
                   );
                 })}
@@ -399,6 +484,64 @@ export default function Dashboard() {
           </CardBody>
         </Card>
       </Grid>
+      {/* Crear Proyecto Modal */}
+      <Modal
+        initialFocusRef={initialRef}
+        finalFocusRef={finalRef}
+        isOpen={isOpen}
+        onClose={onClose}
+      >
+        <ModalOverlay />
+        <ModalContent
+          bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
+          color="white"
+        >
+          <ModalHeader>Nuevo Proyecto</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <FormControl>
+              <FormLabel>Descripción</FormLabel>
+              <Input
+                errorBorderColor="crimson"
+                name="Descripcion"
+                placeholder="Descripción o nombre del proyecto"
+                onChange={handleInputChange}
+                value={formData.Descripcion}
+              />
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>Fecha de Inicio</FormLabel>
+              <Input
+                name="Fecha_Inicio"
+                size="md"
+                type="date"
+                textColor="white"
+                onChange={handleInputChange}
+                value={formData.Fecha_Inicio}
+              />
+            </FormControl>
+
+            <FormControl mt={4}>
+              <FormLabel>Fecha de Finalización</FormLabel>
+              <Input
+                name="Fecha_Fin"
+                size="md"
+                type="date"
+                textColor="white"
+                onChange={handleInputChange}
+                value={formData.Fecha_Fin}
+              />
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="brand" mr={3} onClick={handleSave}>
+              Guardar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 }

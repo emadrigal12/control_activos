@@ -33,7 +33,6 @@ const useUserData = () => {
           const data = await response.json();
           setUser(`${data.Nombre} ${data.Apellido}`);
           setUserData(data);
-          console.log(data);
         }
       } catch (error) {
         setError(error.message);

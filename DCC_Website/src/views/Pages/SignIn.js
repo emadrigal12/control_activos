@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 // Assets
-import signInImage from "assets/img/signInImage.jpg";
+import signInImage from "assets/img/bgProfile.jpg";
 import logo from "assets/img/logo-no-text.png";
 
 // Custom Components

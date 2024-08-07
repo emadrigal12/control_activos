@@ -21,7 +21,6 @@ import {
   Select,
   Stack,
   Checkbox,
-  Textarea,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -35,6 +34,9 @@ import React, { useState, useEffect } from "react";
 // Hooks
 import useFetchData from "hooks/useFetchData";
 import useDeleteData from "hooks/useDeleteData";
+import usePut from "hooks/usePut";
+import useUserData from "hooks/useUserData";
+import { from } from "stylis";
 
 function TablesTableRow(props) {
   const {
@@ -55,12 +57,99 @@ function TablesTableRow(props) {
   } = props;
   const colorStatus = useColorModeValue("white", "gray.400");
 
+  // USO DEL HOOK PARA OBTENER LOS DATOS DEL USUARIO
+  const { userData } = useUserData();
+
+  // USO DEL HOOK PARA OBTENER LOS DATOS DE UN ARTÍCULO
   const { data } = useFetchData(`http://localhost:4000/articulos/${Id}`);
 
+  // USO DEL HOOK PARA ACTUALIZAR UN ARTÍCULO
+  const { putData } = usePut(`http://localhost:4000/articulos/${Id}`);
+
+  // USO DEL HOOK PARA ELIMINAR UN ARTÍCULO
   const deleteUrl = "http://localhost:4000/articulos";
-  const { loading, error, deleteItem } = useDeleteData(deleteUrl);
+  const { deleteItem } = useDeleteData(deleteUrl);
+
+  // Toast para mostrar mensajes de éxito o error
   const toast = useToast();
 
+  // Se inicializa el estado del formulario
+  const [formData, setFormData] = useState({
+    Ubicacion: "",
+    Activo_Num: "",
+    Tipo: "",
+    Marca: "",
+    Modelo: "",
+    Descripcion: "",
+    En_Uso: false,
+    Depreciado: false,
+  });
+  // Se actualiza el estado del formulario con los datos del artículo
+  useEffect(() => {
+    if (data) {
+      setFormData({
+        Ubicacion: data.Ubicacion,
+        Activo_Num: data.Activo_Num,
+        Tipo: data.Tipo,
+        Marca: data.Marca,
+        Modelo: data.Modelo,
+        Descripcion: data.Descripcion,
+        En_Uso: data.En_Uso === 1,
+        Depreciado: data.Depreciado === 1,
+      });
+    }
+  }, [data]);
+
+  // Función para manejar los cambios en los inputs del formulario
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  // Función para manejar los cambios en los checkboxes del formulario
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: checked,
+    }));
+  };
+
+  // Función para manejar la actualización del artículo
+  const handleSave = async () => {
+    // Convertir En_Uso y Depreciado a valores numéricos
+    const dataToSend = {
+      ...formData,
+      En_Uso: formData.En_Uso ? 1 : 0,
+      Depreciado: formData.Depreciado ? 1 : 0,
+      Id_Usuario: userData.Id_Usuario,
+    };
+    const success = await putData(dataToSend);
+    if (success) {
+      props.onDeleteSuccess(Id);
+      toast({
+        title: "Elemento actualizado",
+        description: `El Articulo ha sido actualizado correctamente.`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose(); // Cierra el modal
+    } else {
+      toast({
+        title: "Error al actualizar",
+        description:
+          "Hubo un problema al intentar actualizar el articulo. Por favor, intenta de nuevo más tarde.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  // Función para manejar la eliminación de un artículo
   const handleDelete = async () => {
     const success = await deleteItem(Id);
 
@@ -68,12 +157,11 @@ function TablesTableRow(props) {
       props.onDeleteSuccess(Id);
       toast({
         title: "Elemento eliminado",
-        description: `El elemento con ID ${Id} ha sido eliminado correctamente.`,
+        description: `El activo ha sido eliminado correctamente.`,
         status: "success",
         duration: 5000,
         isClosable: true,
       });
-      // Aquí podrías agregar más lógica después de la eliminación exitosa
     } else {
       toast({
         title: "Error al eliminar",
@@ -82,27 +170,10 @@ function TablesTableRow(props) {
         duration: 5000,
         isClosable: true,
       });
-      // Manejo de errores
     }
   };
-  const [enUsoChecked, setEnUsoChecked] = useState(false); // Estado inicial del checkbox 'En Uso'
-  const [depreciadoChecked, setDepreciadoChecked] = useState(false); // Estado inicial del checkbox 'Depreciado'
 
-  useEffect(() => {
-    if (data) {
-      setEnUsoChecked(data.En_Uso === 1);
-      setDepreciadoChecked(data.Depreciado === 1);
-    }
-  }, [data]);
-
-  const handleEnUsoChange = () => {
-    setEnUsoChecked(!enUsoChecked); // Invierte el estado actual del checkbox 'En Uso'
-  };
-
-  const handleDepreciadoChange = () => {
-    setDepreciadoChecked(!depreciadoChecked); // Invierte el estado actual del checkbox 'Depreciado'
-  };
-
+  // Modal
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenAlert,
@@ -197,7 +268,7 @@ function TablesTableRow(props) {
             bg="transparent"
             variant="no-hover"
             onClick={() => {
-              onViewMoreClick(props.Id); // Aquí pasas el ID al hacer clic
+              onViewMoreClick(props.Id); // Aquí se pasa el ID al hacer click
               onOpen();
             }}
           >
@@ -229,19 +300,31 @@ function TablesTableRow(props) {
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel>Ubicación</FormLabel>
-              <Input value={data?.Ubicacion} />
+              <Input
+                name="Ubicacion"
+                value={formData.Ubicacion}
+                onChange={handleInputChange}
+              />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Activo #</FormLabel>
-              <Input value={data?.Activo_Num} />
+              <Input
+                name="Activo_Num"
+                value={formData.Activo_Num}
+                onChange={handleInputChange}
+              />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Tipo</FormLabel>
-              <Select>
-                <option style={{ color: "black" }} value={data?.Tipo}>
-                  {data?.Tipo}
+              <Select
+                name="Tipo"
+                value={formData.Tipo}
+                onChange={handleInputChange}
+              >
+                <option style={{ color: "black" }} value={formData.Tipo}>
+                  {formData.Tipo}
                 </option>
                 <option
                   style={{ color: "black" }}
@@ -281,33 +364,47 @@ function TablesTableRow(props) {
 
             <FormControl mt={4}>
               <FormLabel>Marca</FormLabel>
-              <Input value={data?.Marca} />
+              <Input
+                name="Marca"
+                value={formData.Marca}
+                onChange={handleInputChange}
+              />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Modelo</FormLabel>
-              <Input value={data?.Modelo} />
+              <Input
+                name="Modelo"
+                value={formData.Modelo}
+                onChange={handleInputChange}
+              />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Descripción</FormLabel>
-              <Input value={data?.Descripcion} />
+              <Input
+                name="Descripcion"
+                value={formData.Descripcion}
+                onChange={handleInputChange}
+              />
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Estado</FormLabel>
               <Stack spacing={5} direction="row">
                 <Checkbox
+                  name="En_Uso"
                   colorScheme="orange"
-                  isChecked={enUsoChecked}
-                  onChange={handleEnUsoChange}
+                  isChecked={formData.En_Uso}
+                  onChange={handleCheckboxChange}
                 >
                   En Uso
                 </Checkbox>
                 <Checkbox
+                  name="Depreciado"
                   colorScheme="orange"
-                  isChecked={depreciadoChecked}
-                  onChange={handleDepreciadoChange}
+                  isChecked={formData.Depreciado}
+                  onChange={handleCheckboxChange}
                 >
                   Depreciado
                 </Checkbox>
@@ -316,7 +413,7 @@ function TablesTableRow(props) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="brand" mr={3}>
+            <Button colorScheme="brand" mr={3} onClick={handleSave}>
               Guardar
             </Button>
             <Button onClick={onOpenAlert} variant="ghost" colorScheme="red">

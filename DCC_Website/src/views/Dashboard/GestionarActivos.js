@@ -39,9 +39,7 @@ function Tables() {
     refetchData();
   };
 
-  const handleViewMoreClick = (id) => {
-    console.log(`Clicked on item with ID: ${id}`);
-  };
+  const handleViewMoreClick = (id) => {};
 
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -145,8 +143,8 @@ function Tables() {
                     Depreciado={
                       row?.Depreciado === 1 ? "Depreciado" : "Sin Depreciar"
                     }
-                    Responsable={`${row?.Responsable} ${row?.Responsable_Apellido}`}
-                    Activo_Num={row?.Activo_Num}
+                    Responsable={`Responsable: ${row?.Responsable} ${row?.Responsable_Apellido}`}
+                    Activo_Num={`Activo #: ${row?.Activo_Num}`}
                     onViewMoreClick={() => handleViewMoreClick(row.Id)}
                     lastItem={index === arr.length - 1 ? true : false}
                     onDeleteSuccess={handleDeleteSuccess}
