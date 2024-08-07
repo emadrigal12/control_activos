@@ -17,7 +17,10 @@
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "mysql2": "^3.10.2",
-    "promise-mysql": "^5.2.0"
+    "pdfkit": "^0.15.0",
+    "pdfkit-table": "^0.1.99",
+    "promise-mysql": "^5.2.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "morgan": "^1.10.0",
