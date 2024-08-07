@@ -3,6 +3,7 @@ import Inicio from "views/Dashboard/Inicio.js";
 import GestionarActivos from "views/Dashboard/GestionarActivos.js";
 import IngresarActivos from "views/Dashboard/IngresarActivos.js";
 import MiPerfil from "views/Dashboard/MiPerfil.js";
+import Reportes from "views/Dashboard/Reportes";
 import SignIn from "views/Pages/SignIn.js";
 
 import {
@@ -57,11 +58,11 @@ var dashRoutes = [
         layout: "/admin",
       },
       {
-        path: "/profile",
-        name: "Ayuda",
-        icon: <HelpIcon color="inherit" />,
+        path: "/reportes",
+        name: "Reportes",
+        icon: <DocumentIcon color="inherit" />,
         secondaryNavbar: true,
-        component: MiPerfil,
+        component: Reportes,
         layout: "/admin",
       },
       {
