@@ -38,10 +38,11 @@ var dashRoutes = [
     layout: "/admin",
   },
   {
-    path: "/sincronizar-datos",
-    name: "Sincronizar Datos",
-    icon: <RocketIcon color="inherit" />,
-    component: IngresarActivos,
+    path: "/reportes",
+    name: "Reportes",
+    icon: <DocumentIcon color="inherit" />,
+    secondaryNavbar: true,
+    component: Reportes,
     layout: "/admin",
   },
   {
@@ -57,14 +58,7 @@ var dashRoutes = [
         component: MiPerfil,
         layout: "/admin",
       },
-      {
-        path: "/reportes",
-        name: "Reportes",
-        icon: <DocumentIcon color="inherit" />,
-        secondaryNavbar: true,
-        component: Reportes,
-        layout: "/admin",
-      },
+      
       {
         path: "/signin",
         name: "Sign In (Temp)",

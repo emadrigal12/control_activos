@@ -17,13 +17,13 @@ async function login(req, res) {
     console.log(jwtConfig);
 
     const token = jwt.sign(
-      { id: user.Id_Usuario, username: user.Username },
+      { id: user.Id_Usuario, username: user.Username, rol_id: user.Rol_Id },
       jwtConfig.secret,
       {
         expiresIn: jwtConfig.expiresIn,
       }
     );
-
+    
     console.log(token);
     res.status(200).json({ token });
   } catch (error) {
