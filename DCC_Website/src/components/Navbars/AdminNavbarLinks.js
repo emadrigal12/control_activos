@@ -25,7 +25,6 @@ import { ItemContent } from "components/Menu/ItemContent";
 import { SidebarResponsive } from "components/Sidebar/Sidebar";
 import PropTypes from "prop-types";
 import React from "react";
-import { NavLink } from "react-router-dom";
 import routes from "routes.js";
 
 export default function HeaderLinks(props) {

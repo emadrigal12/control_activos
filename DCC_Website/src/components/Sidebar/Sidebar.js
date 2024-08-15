@@ -49,6 +49,9 @@ function Sidebar(props) {
     let sidebarActiveShadow = "none";
 
     return routes.map((prop, index) => {
+      if (prop.hidden) {
+        return null;
+      }
       if (prop.redirect) {
         return null;
       }
@@ -275,6 +278,9 @@ export function SidebarResponsive(props) {
     const inactiveColor = "white";
 
     return routes.map((prop, key) => {
+      if (prop.hidden) {
+        return null;
+      }
       if (prop.redirect) {
         return null;
       }

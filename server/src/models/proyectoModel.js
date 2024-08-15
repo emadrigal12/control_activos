@@ -130,19 +130,19 @@ class ProyectoModel {
       }
 
       // Verificar que la cantidad a reducir no sea mayor a la asignada
-      if (cantidad > asignacion[0].Cantidad) {
-        throw new Error("La cantidad a reducir es mayor a la asignada");
-      }
+      //if (cantidad > asignacion[0].Cantidad) {
+      //throw new Error("La cantidad a reducir es mayor a la asignada");
+      //}
 
       // Actualizar inventario
       await conn.execute(
-        "UPDATE INVENTARIO SET Cantidad_Disponible = Cantidad_Disponible + ?, Cantidad_Proyecto = Cantidad_Proyecto - ? WHERE IdArticulo = ?",
+        "UPDATE INVENTARIO SET Cantidad_Disponible = Cantidad_Total - ?, Cantidad_Proyecto = ? WHERE IdArticulo = ?",
         [cantidad, cantidad, articuloId]
       );
 
       // Actualizar cantidad asignada
       await conn.execute(
-        "UPDATE ARTICULO_PROYECTO SET Cantidad = Cantidad - ? WHERE Id_Proyecto = ? AND Id_Articulo = ?",
+        "UPDATE ARTICULO_PROYECTO SET Cantidad = ? WHERE Id_Proyecto = ? AND Id_Articulo = ?",
         [cantidad, proyectoId, articuloId]
       );
 

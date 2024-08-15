@@ -58,13 +58,14 @@ var dashRoutes = [
         component: MiPerfil,
         layout: "/admin",
       },
-      
+
       {
         path: "/signin",
         name: "Sign In (Temp)",
         icon: <DocumentIcon color="inherit" />,
         component: SignIn,
         layout: "/auth",
+        hidden: true,
       },
     ],
   },

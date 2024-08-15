@@ -18,9 +18,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Select,
-  Stack,
-  Checkbox,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -34,7 +31,7 @@ import React, { useState, useEffect } from "react";
 // Hooks
 import useFetchData from "hooks/useFetchData";
 import useDeleteData from "hooks/useDeleteData";
-import usePut from "hooks/usePut";
+import { usePost } from "hooks/usePostData"; // Importa con nombre
 import useUserData from "hooks/useUserData";
 
 function TablesTableRow(props) {
@@ -50,10 +47,11 @@ function TablesTableRow(props) {
     lastItem,
     Responsable,
     Activo_Num,
-    Cantidad_Total,
+    Cantidad,
     Tipo,
     Marca,
-    onViewMoreClick,
+    onModificarClick,
+    selectedProjectId,
   } = props;
   const colorStatus = useColorModeValue("white", "gray.400");
 
@@ -63,11 +61,13 @@ function TablesTableRow(props) {
   // USO DEL HOOK PARA OBTENER LOS DATOS DE UN ARTÍCULO
   const { data } = useFetchData(`http://localhost:4000/articulos/${Id}`);
 
-  // USO DEL HOOK PARA ACTUALIZAR UN ARTÍCULO
-  const { putData } = usePut(`http://localhost:4000/articulos/${Id}`);
+  // USO DEL HOOK PARA ACTUALIZAR LA CANTIDAD DE UN ARTÍCULO EN EL PROYECTO
+  const { postData } = usePost(
+    `http://localhost:4000/reducir-cantidad-activos/${selectedProjectId}/${props.Id}`
+  );
 
   // USO DEL HOOK PARA ELIMINAR UN ARTÍCULO
-  const deleteUrl = `http://localhost:4000/articulos/${Id}`;
+  const deleteUrl = `http://localhost:4000/proyectos/eliminar-activo/${selectedProjectId}/${props.Id}`;
   const { deleteItem } = useDeleteData(deleteUrl);
 
   // Toast para mostrar mensajes de éxito o error
@@ -75,29 +75,13 @@ function TablesTableRow(props) {
 
   // Se inicializa el estado del formulario
   const [formData, setFormData] = useState({
-    Ubicacion: "",
-    Activo_Num: "",
-    Tipo: "",
-    Marca: "",
-    Modelo: "",
-    Descripcion: "",
-    Cantidad_Total: "",
-    En_Uso: false,
-    Depreciado: false,
+    cantidad: "",
   });
   // Se actualiza el estado del formulario con los datos del artículo
   useEffect(() => {
     if (data) {
       setFormData({
-        Ubicacion: data.Ubicacion,
-        Activo_Num: data.Activo_Num,
-        Tipo: data.Tipo,
-        Marca: data.Marca,
-        Modelo: data.Modelo,
-        Descripcion: data.Descripcion,
-        Cantidad_Total: data.Cantidad_Total,
-        En_Uso: data.En_Uso === 1,
-        Depreciado: data.Depreciado === 1,
+        Cantidad: props.Cantidad,
       });
     }
   }, [data]);
@@ -110,30 +94,26 @@ function TablesTableRow(props) {
       [name]: value,
     }));
   };
-  // Función para manejar los cambios en los checkboxes del formulario
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: checked,
-    }));
+
+  const PruebaIdProyecto = () => {
+    console.log("IdProyecto", selectedProjectId);
+    console.log("IdArticulo", Id);
+    console.log("URL", deleteUrl);
   };
 
   // Función para manejar la actualización del artículo
   const handleSave = async () => {
     // Convertir En_Uso y Depreciado a valores numéricos
     const dataToSend = {
-      ...formData,
-      En_Uso: formData.En_Uso ? 1 : 0,
-      Depreciado: formData.Depreciado ? 1 : 0,
-      Id_Usuario: userData.Id_Usuario,
+      cantidad: formData.Cantidad,
     };
-    const success = await putData(dataToSend);
+
+    const success = await postData(dataToSend);
     if (success) {
       props.onDeleteSuccess(Id);
       toast({
         title: "Elemento actualizado",
-        description: `El Articulo ha sido actualizado correctamente.`,
+        description: `El Artículo ha sido actualizado correctamente.`,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -143,7 +123,7 @@ function TablesTableRow(props) {
       toast({
         title: "Error al actualizar",
         description:
-          "Hubo un problema al intentar actualizar el articulo. Por favor, intenta de nuevo más tarde.",
+          "Hubo un problema al intentar actualizar el artículo. Por favor, intenta de nuevo más tarde.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -153,7 +133,7 @@ function TablesTableRow(props) {
 
   // Función para manejar la eliminación de un artículo
   const handleDelete = async () => {
-    const success = await deleteItem(Id);
+    const success = await deleteItem();
 
     if (success) {
       props.onDeleteSuccess(Id);
@@ -266,26 +246,29 @@ function TablesTableRow(props) {
         </Td>
         <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
           <Text fontSize="sm" color="#fff" fontWeight="normal">
-            {Cantidad_Total}
+            {Cantidad}
           </Text>
         </Td>
         <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
           <Button
-            p="0px"
+            p="4px"
             bg="transparent"
-            variant="no-hover"
+            variant="outline"
+            borderColor="gray.300"
             onClick={() => {
-              onViewMoreClick(props.Id); // Aquí se pasa el ID al hacer click
+              onModificarClick(props.Id, props.Cantidad);
+              PruebaIdProyecto();
               onOpen();
             }}
           >
             <Text
               fontSize="sm"
-              color="gray.400"
+              color="gray.300"
               fontWeight="bold"
               cursor="pointer"
+              _hover={{ color: "gray.600" }}
             >
-              Ver Más
+              Modificar
             </Text>
           </Button>
         </Td>
@@ -302,129 +285,16 @@ function TablesTableRow(props) {
           bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
           color="white"
         >
-          <ModalHeader>Información de Activo</ModalHeader>
+          <ModalHeader>Cantidad Asignada al Proyecto</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Ubicación</FormLabel>
+              <FormLabel>Ingrese la nueva cantidad</FormLabel>
               <Input
-                name="Ubicacion"
-                value={formData.Ubicacion}
+                name="Cantidad"
+                value={formData.Cantidad}
                 onChange={handleInputChange}
               />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Activo #</FormLabel>
-              <Input
-                name="Activo_Num"
-                value={formData.Activo_Num}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Tipo</FormLabel>
-              <Select
-                name="Tipo"
-                value={formData.Tipo}
-                onChange={handleInputChange}
-              >
-                <option style={{ color: "black" }} value={formData.Tipo}>
-                  {formData.Tipo}
-                </option>
-                <option
-                  style={{ color: "black" }}
-                  value=" Mobiliario y Equipos"
-                >
-                  Mobiliario y Equipos
-                </option>
-                <option
-                  style={{ color: "black" }}
-                  value="Tecnología y Electrónica"
-                >
-                  Tecnología y Electrónica
-                </option>
-                <option
-                  style={{ color: "black" }}
-                  value="Herramientas y Utensilios"
-                >
-                  Herramientas y Utensilios
-                </option>
-                <option
-                  style={{ color: "black" }}
-                  value="Suministros de Oficina"
-                >
-                  Suministros de Oficina
-                </option>
-                <option style={{ color: "black" }} value="Equipos de Seguridad">
-                  Equipos de Seguridad
-                </option>
-                <option
-                  style={{ color: "black" }}
-                  value="Materiales de Construcción"
-                >
-                  Materiales de Construcción
-                </option>
-              </Select>
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Marca</FormLabel>
-              <Input
-                name="Marca"
-                value={formData.Marca}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Modelo</FormLabel>
-              <Input
-                name="Modelo"
-                value={formData.Modelo}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Descripción</FormLabel>
-              <Input
-                name="Descripcion"
-                value={formData.Descripcion}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Cantidad</FormLabel>
-              <Input
-                name="Cantidad_Total"
-                value={formData.Cantidad_Total}
-                onChange={handleInputChange}
-              />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Estado</FormLabel>
-              <Stack spacing={5} direction="row">
-                <Checkbox
-                  name="En_Uso"
-                  colorScheme="orange"
-                  isChecked={formData.En_Uso}
-                  onChange={handleCheckboxChange}
-                >
-                  En Uso
-                </Checkbox>
-                <Checkbox
-                  name="Depreciado"
-                  colorScheme="orange"
-                  isChecked={formData.Depreciado}
-                  onChange={handleCheckboxChange}
-                >
-                  Depreciado
-                </Checkbox>
-              </Stack>
             </FormControl>
           </ModalBody>
 
@@ -447,11 +317,14 @@ function TablesTableRow(props) {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Eliminar Activo
+              Eliminar Activo del Proyecto
             </AlertDialogHeader>
 
             <AlertDialogBody>
               Estás seguro que deseas eliminar este activo?
+              <span style={{ fontSize: "13px", color: "gray" }}>
+                <br /> (Esta acción no eliminará el activo de la base de datos)
+              </span>
             </AlertDialogBody>
 
             <AlertDialogFooter>

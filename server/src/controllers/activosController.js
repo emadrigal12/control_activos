@@ -73,6 +73,7 @@ async function actualizarArticulo(req, res) {
       Id_Usuario,
       En_Uso,
       Depreciado,
+      Cantidad_Total,
     } = req.body;
 
     const articuloExistente = await ArticuloModel.obtenerPorId(id);
@@ -90,6 +91,7 @@ async function actualizarArticulo(req, res) {
       Id_Usuario,
       En_Uso,
       Depreciado,
+      Cantidad_Total,
     });
 
     if (filasActualizadas > 0) {

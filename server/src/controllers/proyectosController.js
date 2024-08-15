@@ -72,6 +72,9 @@ async function reducirCantidadActivos(req, res) {
   try {
     const { proyectoId, articuloId } = req.params;
     const cantidad = req.body.cantidad;
+    console.log(
+      `Reduciendo ${cantidad} del artículo ${articuloId} en proyecto ${proyectoId}`
+    );
     await ProyectoModel.reducirCantidadActivos(
       proyectoId,
       articuloId,
@@ -81,11 +84,9 @@ async function reducirCantidadActivos(req, res) {
       .status(200)
       .json({ message: "Cantidad de activos reducida exitosamente" });
   } catch (error) {
-    res
-      .status(400)
-      .json({
-        message: "Error al reducir cantidad de activos: " + error.message,
-      });
+    res.status(400).json({
+      message: "Error al reducir cantidad de activos: " + error.message,
+    });
   }
 }
 

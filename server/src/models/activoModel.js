@@ -5,7 +5,7 @@ class ArticuloModel {
     const query = `
       SELECT a.*, u.Nombre AS Responsable, u.Apellido AS Responsable_Apellido, i.Cantidad_Total, i.Cantidad_Proyecto, i.Cantidad_Disponible
       FROM ARTICULO a
-      LEFT JOIN USUARIO u ON a.Id_Usuario = u.Id_Usuario  -- Lo uni con la tabla de USUARIO para obtener el nombre del responsable
+      LEFT JOIN USUARIO u ON a.Id_Usuario = u.Id_Usuario  
       LEFT JOIN INVENTARIO i ON a.Id = i.IdArticulo
     `;
 
@@ -54,7 +54,7 @@ class ArticuloModel {
   }
 
   static async actualizar(id, articuloData) {
-    const query = `
+    const updateArticuloQuery = `
       UPDATE ARTICULO 
       SET 
         Descripcion = ?, 
@@ -68,7 +68,16 @@ class ArticuloModel {
         Depreciado = ? 
       WHERE Id = ?
     `;
-    const values = [
+
+    const updateInventarioQuery = `
+      UPDATE INVENTARIO
+      SET
+        Cantidad_Total = ?,
+        Cantidad_Disponible = Cantidad_Total - Cantidad_Proyecto
+      WHERE IdArticulo = ?
+    `;
+
+    const articuloValues = [
       articuloData.Descripcion,
       articuloData.Ubicacion,
       articuloData.Activo_Num,
@@ -80,7 +89,15 @@ class ArticuloModel {
       articuloData.Depreciado,
       id,
     ];
-    const [result] = await connection.execute(query, values);
+
+    const inventarioValues = [articuloData.Cantidad_Total, id];
+
+    await connection.execute(updateArticuloQuery, articuloValues);
+    const [result] = await connection.execute(
+      updateInventarioQuery,
+      inventarioValues
+    );
+
     return result.affectedRows;
   }
 

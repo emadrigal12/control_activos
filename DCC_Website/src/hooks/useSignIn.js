@@ -1,10 +1,11 @@
 import { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { AuthContext } from "./AuthContext";
+import { jwtDecode } from "jwt-decode";
 
 const useSignIn = () => {
   const history = useHistory();
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated, setUserRole } = useContext(AuthContext);
 
   // Estados para el correo, contraseña y mensajes de error
   const [email, setEmail] = useState("");
@@ -74,7 +75,9 @@ const useSignIn = () => {
 
           // Almacenar el token en localStorage
           localStorage.setItem("token", result.token);
+          const decodedToken = jwtDecode(result.token);
           setIsAuthenticated(true);
+          setUserRole(result.rol_id);
 
           history.push("/admin/inicio");
         }
