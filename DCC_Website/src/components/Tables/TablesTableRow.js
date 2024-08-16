@@ -28,16 +28,26 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   useToast,
+  List,
+  ListItem,
+  ListIcon,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
+
+// Icons
+import { MdOutlineReadMore } from "react-icons/md";
+import { FaProjectDiagram } from "react-icons/fa";
 
 // Hooks
 import useFetchData from "hooks/useFetchData";
 import useDeleteData from "hooks/useDeleteData";
 import usePut from "hooks/usePut";
 import useUserData from "hooks/useUserData";
+import { usePost } from "hooks/usePostData";
 
 function TablesTableRow(props) {
+  const [selectedProject, setSelectedProject] = React.useState(null);
+
   const {
     Id,
     imagen,
@@ -70,8 +80,30 @@ function TablesTableRow(props) {
   const deleteUrl = `http://localhost:4000/articulos/${Id}`;
   const { deleteItem } = useDeleteData(deleteUrl);
 
+  // USO DEL HOOK PARA OBTENER LOS PROYECTOS
+  const { data: dataProyectos, loading: loadingProyectos } = useFetchData(
+    "http://localhost:4000/proyectos"
+  );
+
+  // USO DEL HOOK PARA ACTUALIZAR LA CANTIDAD DE UN ARTÍCULO EN EL PROYECTO
+  const { postData } = usePost(
+    "http://localhost:4000/proyectos/asignar-activo"
+  );
+
   // Toast para mostrar mensajes de éxito o error
   const toast = useToast();
+
+  // Estado para la cantidad de activos a asignar
+  const [cantidad, setCantidad] = useState(0);
+
+  // Función para manejar los cambios en los inputs de la cantidad de activos
+  const handleInputCantidadChange = (e) => {
+    const { name, value } = e.target;
+    setCantidad((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   // Se inicializa el estado del formulario
   const [formData, setFormData] = useState({
@@ -175,12 +207,59 @@ function TablesTableRow(props) {
     }
   };
 
-  // Modal
+  // Función para manejar la asignación de activos a un proyecto
+  const handleAsignarActivo = async () => {
+    onCloseAsignar();
+    const dataToSend = {
+      proyectoId: selectedProject.Id,
+      articuloId: props.Id,
+      cantidad: cantidad.Cantidad,
+    };
+
+    const success = await postData(dataToSend);
+    if (success) {
+      props.onDeleteSuccess(Id);
+      toast({
+        title: "Elemento actualizado",
+        description: `El Artículo ha sido actualizado correctamente.`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose(); // Cierra el modal
+    } else {
+      toast({
+        title: "Error al asignar",
+        description: "El activo ya ha sido asignado a este proyecto.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleItemClick = (item) => {
+    setSelectedProject(item);
+    onCloseProyectos();
+    onOpenAsignar();
+  };
+
+  // Modals
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: isOpenAlert,
     onOpen: onOpenAlert,
     onClose: onCloseAlert,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenProyectos,
+    onOpen: onOpenProyectos,
+    onClose: onCloseProyectos,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenAsignar,
+    onOpen: onOpenAsignar,
+    onClose: onCloseAsignar,
   } = useDisclosure();
   const cancelRef = React.useRef();
 
@@ -274,6 +353,15 @@ function TablesTableRow(props) {
             p="0px"
             bg="transparent"
             variant="no-hover"
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              _hover: {
+                ".icon": {
+                  transform: "scale(1.1)",
+                },
+              },
+            }}
             onClick={() => {
               onViewMoreClick(props.Id); // Aquí se pasa el ID al hacer click
               onOpen();
@@ -281,16 +369,104 @@ function TablesTableRow(props) {
           >
             <Text
               fontSize="sm"
-              color="gray.400"
+              color="gray.300"
+              fontWeight="bold"
+              cursor="pointer"
+              display="inline-flex"
+              alignItems="center"
+            >
+              Ver Más
+              <MdOutlineReadMore
+                className="icon" // Añade esta clase para aplicar el estilo de hover
+                size="30px"
+                style={{
+                  marginLeft: "2px",
+                  color: "orange",
+                  transition: "transform 0.2s ease-in-out", // Transición suave aplicada al ícono
+                }}
+              />
+            </Text>
+          </Button>
+        </Td>
+        <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
+          <Button
+            p="5px"
+            bg="brand.200"
+            _hover={{ opacity: "0.8" }}
+            _active={{ opacity: "0.9" }}
+            onClick={onOpenProyectos}
+          >
+            <Text
+              fontSize="sm"
+              color="gray.200"
               fontWeight="bold"
               cursor="pointer"
             >
-              Ver Más
+              Asignar
             </Text>
           </Button>
         </Td>
       </Tr>
-      {/* Modal */}
+      {/* Modal para mostrar los proyectos disponibles */}
+      <Modal isOpen={isOpenProyectos} onClose={onCloseProyectos}>
+        <ModalOverlay />
+        <ModalContent
+          bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
+          color="white"
+        >
+          <ModalHeader>Seleccionar Proyecto</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <List spacing={3}>
+              {dataProyectos.map((project) => (
+                <ListItem
+                  key={project.id}
+                  onClick={() => handleItemClick(project)}
+                  cursor="pointer"
+                  textColor="white"
+                  bg="blackAlpha.500"
+                  p={5}
+                  borderRadius="md"
+                  _hover={{ bg: "blackAlpha.600" }}
+                >
+                  <ListIcon as={FaProjectDiagram} color="brand.300" />
+                  {project.Descripcion}
+                </ListItem>
+              ))}
+            </List>
+          </ModalBody>
+          <ModalFooter></ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* Modal para asignar cantidad de activos a Proyecto */}
+      <Modal
+        initialFocusRef={initialRef}
+        finalFocusRef={finalRef}
+        isOpen={isOpenAsignar}
+        onClose={onCloseAsignar}
+      >
+        <ModalOverlay />
+        <ModalContent
+          bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
+          color="white"
+        >
+          <ModalHeader>Cantidad de Activos</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <FormControl>
+              <FormLabel>Ingrese la cantidad a asignar</FormLabel>
+              <Input name="Cantidad" onChange={handleInputCantidadChange} />
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="brand" mr={3} onClick={handleAsignarActivo}>
+              Guardar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* Modal Para Mostrar Info del Activo*/}
       <Modal
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}
@@ -445,7 +621,10 @@ function TablesTableRow(props) {
         onClose={onCloseAlert}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent
+            bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
+            color="white"
+          >
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               Eliminar Activo
             </AlertDialogHeader>
@@ -455,7 +634,13 @@ function TablesTableRow(props) {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onCloseAlert}>
+              <Button
+                ref={cancelRef}
+                onClick={onCloseAlert}
+                bg="#4f4f4f"
+                color="white"
+                _hover={{ bg: "#3f3f3f" }}
+              >
                 Cancelar
               </Button>
               <Button

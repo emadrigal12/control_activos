@@ -31,7 +31,7 @@ import React, { useState, useEffect } from "react";
 // Hooks
 import useFetchData from "hooks/useFetchData";
 import useDeleteData from "hooks/useDeleteData";
-import { usePost } from "hooks/usePostData"; // Importa con nombre
+import { usePost } from "hooks/usePostData";
 import useUserData from "hooks/useUserData";
 
 function TablesTableRow(props) {
@@ -95,15 +95,8 @@ function TablesTableRow(props) {
     }));
   };
 
-  const PruebaIdProyecto = () => {
-    console.log("IdProyecto", selectedProjectId);
-    console.log("IdArticulo", Id);
-    console.log("URL", deleteUrl);
-  };
-
   // Función para manejar la actualización del artículo
   const handleSave = async () => {
-    // Convertir En_Uso y Depreciado a valores numéricos
     const dataToSend = {
       cantidad: formData.Cantidad,
     };
@@ -251,13 +244,11 @@ function TablesTableRow(props) {
         </Td>
         <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
           <Button
-            p="4px"
+            p="0px"
             bg="transparent"
-            variant="outline"
-            borderColor="gray.300"
+            variant="no-hover"
             onClick={() => {
               onModificarClick(props.Id, props.Cantidad);
-              PruebaIdProyecto();
               onOpen();
             }}
           >
@@ -266,7 +257,6 @@ function TablesTableRow(props) {
               color="gray.300"
               fontWeight="bold"
               cursor="pointer"
-              _hover={{ color: "gray.600" }}
             >
               Modificar
             </Text>
@@ -315,7 +305,10 @@ function TablesTableRow(props) {
         onClose={onCloseAlert}
       >
         <AlertDialogOverlay>
-          <AlertDialogContent>
+          <AlertDialogContent
+            bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
+            color="white"
+          >
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
               Eliminar Activo del Proyecto
             </AlertDialogHeader>
@@ -328,7 +321,13 @@ function TablesTableRow(props) {
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onCloseAlert}>
+              <Button
+                ref={cancelRef}
+                onClick={onCloseAlert}
+                bg="#4f4f4f"
+                color="white"
+                _hover={{ bg: "#3f3f3f" }}
+              >
                 Cancelar
               </Button>
               <Button

@@ -75,6 +75,12 @@ router.get(
   verificarPermiso("Consultar_Proyecto"),
   proyectoController.obtenerProyectos
 );
+router.get(
+  "/proyecto/:id",
+  authMiddleware,
+  verificarPermiso("Consultar_Proyecto"),
+  proyectoController.obtenerProyectoPorId
+);
 router.put(
   "/proyectos/:id",
   authMiddleware,

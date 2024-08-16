@@ -90,7 +90,6 @@ function Tables() {
     setSelectedProject(item);
     setShowTable(false);
     onCloseProyectos();
-    console.log(`Seleccionado: ${item.Descripcion} con id: ${item.Id}`);
   };
 
   return (
@@ -109,7 +108,7 @@ function Tables() {
             >
               <Button
                 onClick={onOpenProyectos}
-                size="sm"
+                size="md"
                 borderRadius="12px"
                 bg="brand.200"
                 _hover={{ opacity: "0.8" }}
@@ -191,7 +190,7 @@ function Tables() {
                     fontFamily="Plus Jakarta Display"
                     borderBottomColor="#56577A"
                   >
-                    Cantidad
+                    Uso
                   </Th>
                   <Th
                     color="gray.400"
@@ -207,6 +206,7 @@ function Tables() {
                   >
                     Cantidad
                   </Th>
+                  <Th borderBottomColor="#56577A"></Th>
                   <Th borderBottomColor="#56577A"></Th>
                 </Tr>
               </Thead>
@@ -246,7 +246,7 @@ function Tables() {
               alignItems="center" // Alinea el contenido verticalmente al centro
               w="100%" // Asegura que el Flex ocupe el ancho completo del contenedor
             >
-              <Text fontSize="lg" color="#fff" fontWeight="bold">
+              <Text fontSize="xl" color="#fff" fontWeight="bold">
                 Proyecto:{" "}
                 <span style={{ color: "#F68A1F" }}>
                   {selectedProject?.Descripcion || "Sin Seleccionar"}
@@ -268,7 +268,21 @@ function Tables() {
               </Button>
             </Flex>
           </CardHeader>
-
+          <Flex align="center" mb={3}>
+            <Button
+              onClick={handleVolver}
+              size="md"
+              borderRadius="12px"
+              bg="brand.300"
+              _hover={{ opacity: "0.8" }}
+              _active={{ opacity: "0.9" }}
+              mt={{ sm: "10px", md: "0px" }}
+            >
+              <Text fontSize="md" color="white" fontWeight="bold">
+                Asignar Activo
+              </Text>
+            </Button>
+          </Flex>
           <Flex align="center" mb={3}>
             <InputGroup
               cursor="pointer"
@@ -337,7 +351,7 @@ function Tables() {
                     fontFamily="Plus Jakarta Display"
                     borderBottomColor="#56577A"
                   >
-                    En Uso
+                    Uso
                   </Th>
                   <Th
                     color="gray.400"
@@ -390,8 +404,11 @@ function Tables() {
       {/* Modal para mostrar los proyectos disponibles */}
       <Modal isOpen={isOpenProyectos} onClose={onCloseProyectos}>
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+        <ModalContent
+          bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
+          color="white"
+        >
+          <ModalHeader>Proyectos Disponibles</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <List spacing={3}>
@@ -400,15 +417,11 @@ function Tables() {
                   key={project.id}
                   onClick={() => handleItemClick(project)}
                   cursor="pointer"
-                  textColor="black"
-                  bg={
-                    selectedProject && selectedProject.id === project.id
-                      ? "gray.100"
-                      : "transparent"
-                  }
-                  p={2}
+                  textColor="white"
+                  bg="blackAlpha.500"
+                  p={5}
                   borderRadius="md"
-                  _hover={{ bg: "gray.200" }}
+                  _hover={{ bg: "blackAlpha.600" }}
                 >
                   <ListIcon as={FaProjectDiagram} color="brand.300" />
                   {project.Descripcion}
@@ -416,12 +429,7 @@ function Tables() {
               ))}
             </List>
           </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onCloseProyectos}>
-              Close
-            </Button>
-          </ModalFooter>
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
     </Flex>

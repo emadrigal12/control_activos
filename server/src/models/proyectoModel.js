@@ -24,6 +24,20 @@ class ProyectoModel {
     return rows;
   }
 
+  static async obtenerProyectoPorId(id) {
+    const query = "SELECT * FROM PROYECTO WHERE Id = ?";
+    const [rows] = await connection.execute(query, [id]);
+    // Modificar las fechas para que solo devuelvan la parte de la fecha
+    if (rows.length > 0) {
+      const proyecto = rows[0];
+      proyecto.Fecha_Inicio = proyecto.Fecha_Inicio.toISOString().split("T")[0];
+      proyecto.Fecha_Fin = proyecto.Fecha_Fin.toISOString().split("T")[0];
+      return proyecto;
+    } else {
+      return null; // O lanza un error si prefieres manejarlo de otra forma
+    }
+  }
+
   static async obtenerPorId(id) {
     const query = "SELECT * FROM PROYECTO WHERE Id = ?";
     const [rows] = await connection.execute(query, [id]);
@@ -115,35 +129,74 @@ class ProyectoModel {
     }
   }
 
-  static async reducirCantidadActivos(proyectoId, articuloId, cantidad) {
+  static async reducirCantidadActivos(proyectoId, articuloId, nuevaCantidad) {
     const conn = await connection.getConnection();
     try {
       await conn.beginTransaction();
 
-      // Obtener cantidad asignada
+      // Obtener cantidad asignada actual
       const [asignacion] = await conn.execute(
         "SELECT Cantidad FROM ARTICULO_PROYECTO WHERE Id_Proyecto = ? AND Id_Articulo = ?",
         [proyectoId, articuloId]
       );
-      if (asignacion.length === 0) {
-        throw new Error("Activo no asignado al proyecto");
+      const cantidadActual = asignacion.length > 0 ? asignacion[0].Cantidad : 0;
+
+      // Validar que la nueva cantidad no sea negativa
+      if (nuevaCantidad < 0) {
+        throw new Error("La nueva cantidad no puede ser negativa");
       }
 
-      // Verificar que la cantidad a reducir no sea mayor a la asignada
-      //if (cantidad > asignacion[0].Cantidad) {
-      //throw new Error("La cantidad a reducir es mayor a la asignada");
-      //}
-
-      // Actualizar inventario
-      await conn.execute(
-        "UPDATE INVENTARIO SET Cantidad_Disponible = Cantidad_Total - ?, Cantidad_Proyecto = ? WHERE IdArticulo = ?",
-        [cantidad, cantidad, articuloId]
+      // Obtener cantidad disponible actual
+      const [inventario] = await conn.execute(
+        "SELECT Cantidad_Disponible FROM INVENTARIO WHERE IdArticulo = ?",
+        [articuloId]
       );
+      const cantidadDisponible =
+        inventario.length > 0 ? inventario[0].Cantidad_Disponible : 0;
 
-      // Actualizar cantidad asignada
+      // Calcular la diferencia entre la nueva cantidad y la cantidad actual
+      const diferencia = nuevaCantidad - cantidadActual;
+
+      if (nuevaCantidad === 0) {
+        // Si la nueva cantidad es 0, ajustar la cantidad en el inventario y el proyecto
+        await conn.execute(
+          "UPDATE INVENTARIO SET Cantidad_Disponible = Cantidad_Disponible + ? WHERE IdArticulo = ?",
+          [cantidadActual, articuloId]
+        );
+        await conn.execute(
+          "UPDATE ARTICULO_PROYECTO SET Cantidad = ? WHERE Id_Proyecto = ? AND Id_Articulo = ?",
+          [nuevaCantidad, proyectoId, articuloId]
+        );
+      } else if (cantidadActual === 0 && nuevaCantidad > 0) {
+        // Si la cantidad actual es 0 y la nueva cantidad es mayor que 0
+        if (nuevaCantidad > cantidadDisponible) {
+          throw new Error("La cantidad deseada supera la cantidad disponible");
+        }
+        await conn.execute(
+          "UPDATE INVENTARIO SET Cantidad_Disponible = Cantidad_Disponible - ?, Cantidad_Proyecto = Cantidad_Proyecto + ? WHERE IdArticulo = ?",
+          [nuevaCantidad, nuevaCantidad, articuloId]
+        );
+      } else if (diferencia > 0) {
+        // Si la nueva cantidad es mayor que la cantidad actual
+        if (diferencia > cantidadDisponible) {
+          throw new Error("La cantidad deseada supera la cantidad disponible");
+        }
+        await conn.execute(
+          "UPDATE INVENTARIO SET Cantidad_Disponible = Cantidad_Disponible - ?, Cantidad_Proyecto = Cantidad_Proyecto + ? WHERE IdArticulo = ?",
+          [diferencia, diferencia, articuloId]
+        );
+      } else if (diferencia < 0) {
+        // Si la nueva cantidad es menor que la cantidad actual
+        await conn.execute(
+          "UPDATE INVENTARIO SET Cantidad_Disponible = Cantidad_Disponible + ?, Cantidad_Proyecto = Cantidad_Proyecto - ? WHERE IdArticulo = ?",
+          [-diferencia, -diferencia, articuloId]
+        );
+      }
+
+      // Actualizar cantidad asignada en ARTICULO_PROYECTO
       await conn.execute(
         "UPDATE ARTICULO_PROYECTO SET Cantidad = ? WHERE Id_Proyecto = ? AND Id_Articulo = ?",
-        [cantidad, proyectoId, articuloId]
+        [nuevaCantidad, proyectoId, articuloId]
       );
 
       await conn.commit();

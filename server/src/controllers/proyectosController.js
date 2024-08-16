@@ -24,6 +24,22 @@ async function obtenerProyectos(req, res) {
   }
 }
 
+async function obtenerProyectoPorId(req, res) {
+  try {
+    const { id } = req.params;
+    const proyecto = await ProyectoModel.obtenerProyectoPorId(id);
+    if (proyecto) {
+      res.status(200).json(proyecto);
+    } else {
+      res.status(404).json({ message: "Proyecto no encontrado" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error al obtener proyecto: " + error.message });
+  }
+}
+
 async function actualizarProyecto(req, res) {
   try {
     const { id } = req.params;
@@ -119,6 +135,7 @@ async function finalizarProyecto(req, res) {
 module.exports = {
   crearProyecto,
   obtenerProyectos,
+  obtenerProyectoPorId,
   actualizarProyecto,
   asignarActivoAProyecto,
   finalizarProyecto,

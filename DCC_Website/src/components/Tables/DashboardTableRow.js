@@ -18,6 +18,7 @@ import {
   Select,
   ModalFooter,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 
@@ -37,32 +38,39 @@ function DashboardTableRow(props) {
   } = props;
 
   // USO DEL HOOK PARA OBTENER LOS DATOS DE UN PROYECTO POR ID
-  const handleEditProyectClick = (id) => {
-    console.log("Editando proyecto con id: ", id);
-    onOpenEdit();
-  };
-  const { data } = useFetchData(`http://localhost:4000/articulos/${Id}`);
+  const { data: ProyectoData } = useFetchData(
+    `http://localhost:4000/proyecto/${props.Id}`
+  );
+
+  function ProyectoDataPrueba() {
+    console.log(ProyectoData);
+    console.log(props.Id);
+  }
 
   // USO DEL HOOK PARA ACTUALIZAR LOS DATOS DE UN PROYECTO
-  const { putData } = usePut(`http://localhost:4000/articulos/${Id}`);
+  const { putData } = usePut(`http://localhost:4000/proyectos/${props.Id}`);
+
+  // Toast para mostrar mensajes de éxito o error
+  const toast = useToast();
 
   // Se inicializa el estado del formulario
   const [formData, setFormData] = useState({
     Descripcion: "",
     Fecha_Inicio: "",
     Fecha_Fin: "",
+    Estado: "",
   });
   // Se actualiza el estado del formulario con los datos del proyecto
   useEffect(() => {
-    if (data) {
+    if (ProyectoData) {
       setFormData({
-        Descripcion: "",
-        Fecha_Inicio: "",
-        Fecha_Fin: "",
-        Estado: "",
+        Descripcion: ProyectoData.Descripcion,
+        Fecha_Inicio: ProyectoData.Fecha_Inicio,
+        Fecha_Fin: ProyectoData.Fecha_Fin,
+        Estado: ProyectoData.Estado,
       });
     }
-  }, [data]);
+  }, [ProyectoData]);
 
   // Función para manejar los cambios en los inputs del formulario
   const handleInputChange = (e) => {
@@ -73,9 +81,33 @@ function DashboardTableRow(props) {
     }));
   };
 
-  // Función para manejar la actualización del artículo
+  // Función para manejar la actualización del Proyecto
   const handleSave = async () => {
-    console.log("Guardando...");
+    // Convertir En_Uso y Depreciado a valores numéricos
+    const dataToSend = {
+      ...formData,
+    };
+    const success = await putData(dataToSend);
+    if (success) {
+      props.onDeleteSuccess(Id);
+      toast({
+        title: "Elemento actualizado",
+        description: `El Proyecto ha sido actualizado correctamente.`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose(); // Cierra el modal
+    } else {
+      toast({
+        title: "Error al actualizar",
+        description:
+          "Hubo un problema al intentar actualizar el proyecto. Por favor, intenta de nuevo más tarde.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   // Modal Editar Proyecto
@@ -92,7 +124,7 @@ function DashboardTableRow(props) {
         border={lastItem ? "none" : null}
       >
         <Flex align="center" py=".8rem" minWidth="100%" flexWrap="nowrap">
-          <Icon as={logo} h={"24px"} w={"24px"} me="18px" />
+          <Icon as={logo} h={"24px"} w={"24px"} me="18px" color="brand.300" />
           <Text fontSize="sm" color="#fff" fontWeight="normal" minWidth="100%">
             {Descripcion}
           </Text>
@@ -108,24 +140,6 @@ function DashboardTableRow(props) {
         <Text fontSize="sm" color="#fff" fontWeight="bold" pb=".5rem">
           {Fecha_Fin}
         </Text>
-      </Td>
-      <Td borderBottomColor="#56577A" border={lastItem ? "none" : null}>
-        <Flex direction="column">
-          <Button
-            p="0px"
-            colorScheme="orange"
-            size="sm"
-            direction="row"
-            align="center"
-            maxW={"100px"}
-            variant="outline"
-            spacing={4}
-            _hover={{ opacity: "0.8" }}
-            _active={{ opacity: "0.9" }}
-          >
-            Seleccionar
-          </Button>
-        </Flex>
       </Td>
       <Td borderBottomColor="#56577A" border={lastItem ? "none" : null}>
         <Flex direction="column">
@@ -168,7 +182,8 @@ function DashboardTableRow(props) {
                 <Input
                   name="Descripcion"
                   placeholder="Descripción o nombre del proyecto"
-                  //onChange={handleInputChange}
+                  value={formData.Descripcion}
+                  onChange={handleInputChange}
                 />
               </FormControl>
 
@@ -179,6 +194,8 @@ function DashboardTableRow(props) {
                   size="md"
                   type="date"
                   textColor="white"
+                  value={formData.Fecha_Inicio}
+                  onChange={handleInputChange}
                 />
               </FormControl>
 
@@ -189,29 +206,27 @@ function DashboardTableRow(props) {
                   size="md"
                   type="date"
                   textColor="white"
-                />
-              </FormControl>
-
-              <FormControl mt={4}>
-                <FormLabel>Estado</FormLabel>
-                <Select
-                  name="Estado"
-                  value={formData.Tipo}
+                  value={formData.Fecha_Fin}
                   onChange={handleInputChange}
-                >
-                  <option style={{ color: "black" }} value="Activo">
-                    Activo
-                  </option>
-                  <option style={{ color: "black" }} value="Inactivo">
-                    Inactivo
-                  </option>
-                </Select>
+                />
               </FormControl>
             </ModalBody>
 
             <ModalFooter>
               <Button colorScheme="brand" mr={3} onClick={handleSave}>
                 Guardar
+              </Button>
+              <Button colorScheme="brand" mr={3} onClick={onEditClick}>
+                Finalizar
+              </Button>
+              <Button
+                colorScheme="red"
+                variant="outline"
+                mr={3}
+                _hover={{ bg: "blackAlpha.300" }}
+                onClick={ProyectoDataPrueba}
+              >
+                Cancelar Proyecto
               </Button>
             </ModalFooter>
           </ModalContent>

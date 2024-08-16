@@ -48,6 +48,7 @@ import { MdQueryStats } from "react-icons/md";
 import { SearchIcon } from "@chakra-ui/icons";
 import { AiFillCheckCircle } from "react-icons/ai";
 import { BsArrowRight } from "react-icons/bs";
+import { FaProjectDiagram } from "react-icons/fa";
 
 import DashboardTableRow from "components/Tables/DashboardTableRow";
 import TimelineRow from "components/Tables/TimelineRow";
@@ -81,8 +82,7 @@ export default function Dashboard() {
     Fecha_Fin: "",
   });
 
-  const handleRefetchData = (deletedId) => {
-    console.log("Haciendo Refetch");
+  const handleRefetchData = () => {
     refetchData();
   };
 
@@ -147,7 +147,7 @@ export default function Dashboard() {
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
 
-  const handleEditProyectClick = (id) => {};
+  const handleEditProyectClick = () => {};
 
   return (
     <Flex flexDirection="column" pt={{ base: "120px", md: "75px" }}>
@@ -402,20 +402,15 @@ export default function Dashboard() {
                     fontFamily="Plus Jakarta Display"
                     borderBottomColor="#56577A"
                   >
-                    Fecha de Inicio
+                    Inicio
                   </Th>
                   <Th
                     color="gray.400"
                     fontFamily="Plus Jakarta Display"
                     borderBottomColor="#56577A"
                   >
-                    Fecha de Finalización
+                    Finalización
                   </Th>
-                  <Th
-                    color="gray.400"
-                    fontFamily="Plus Jakarta Display"
-                    borderBottomColor="#56577A"
-                  ></Th>
                   <Th
                     color="gray.400"
                     fontFamily="Plus Jakarta Display"
@@ -429,12 +424,13 @@ export default function Dashboard() {
                     <DashboardTableRow
                       Id={row?.Id}
                       Descripcion={row?.Descripcion}
-                      logo={row.logo}
+                      logo={FaProjectDiagram}
                       Fecha_Inicio={row.Fecha_Inicio}
                       Fecha_Fin={row.Fecha_Fin}
                       progression={row.progression}
                       lastItem={index === arr.length - 1 ? true : false}
                       onEditClick={() => handleEditProyectClick(row.Id)}
+                      onDeleteSuccess={handleRefetchData}
                     />
                   );
                 })}
