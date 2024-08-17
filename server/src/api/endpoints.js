@@ -54,12 +54,26 @@ router.delete(
   activoController.eliminarArticulo
 );
 
-//Perfil
+//Perfil / Usuarios
 router.get(
   "/usuario/:id",
   authMiddleware,
   verificarPermiso("Ver_Perfil_Usuario"),
   usuariosController.obtenerUsuarioPorId
+);
+
+router.post(
+  "/usuarios",
+  authMiddleware,
+  verificarPermiso("Usuario_Crear"),
+  usuariosController.crearUsuario
+);
+
+router.put(
+  "/usuarios/:id/cambiarEstado",
+  authMiddleware,
+  verificarPermiso("Usuario_Editar"),
+  usuariosController.cambiarEstadoUsuario
 );
 
 //Proyectos
