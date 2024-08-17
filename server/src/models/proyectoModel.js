@@ -254,6 +254,28 @@ class ProyectoModel {
       conn.release();
     }
   }
+
+
+  static async cancelarProyecto(id) {
+    const conn = await connection.getConnection();
+    try {
+      await conn.beginTransaction();
+
+      // Actualizar estado del proyecto
+      await conn.execute("UPDATE PROYECTO SET Estado = ? WHERE Id = ?", [
+        3,
+        id,
+      ]);
+
+      await conn.commit();
+      return true;
+    } catch (error) {
+      await conn.rollback();
+      throw error;
+    } finally {
+      conn.release();
+    }
+  }
 }
 
 module.exports = ProyectoModel;

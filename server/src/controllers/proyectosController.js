@@ -132,6 +132,20 @@ async function finalizarProyecto(req, res) {
   }
 }
 
+async function cancelarProyecto(req, res) {
+  try {
+    const { id } = req.params;
+    await ProyectoModel.cancelarProyecto(id);
+    res.status(200).json({
+      message: "Proyecto cancelado exitosamente",
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error al cancelar el proyecto: " + error.message });
+  }
+}
+
 module.exports = {
   crearProyecto,
   obtenerProyectos,
@@ -142,4 +156,5 @@ module.exports = {
   eliminarActivoDeProyecto,
   obtenerActivosDeProyecto,
   reducirCantidadActivos,
+  cancelarProyecto
 };
