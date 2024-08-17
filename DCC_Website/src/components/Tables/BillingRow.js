@@ -1,11 +1,9 @@
-import { Box, Button, Flex, Icon, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import React from "react";
-import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 
 function BillingRow(props) {
   const {
     ubicacion,
-    observaciones,
     estado,
     descripcion,
     modelo,

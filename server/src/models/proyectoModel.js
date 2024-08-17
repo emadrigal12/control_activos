@@ -34,7 +34,7 @@ class ProyectoModel {
       proyecto.Fecha_Fin = proyecto.Fecha_Fin.toISOString().split("T")[0];
       return proyecto;
     } else {
-      return null; // O lanza un error si prefieres manejarlo de otra forma
+      return null;
     }
   }
 
@@ -234,16 +234,10 @@ class ProyectoModel {
       );
       for (const asignacion of asignaciones) {
         await conn.execute(
-          "UPDATE INVENTARIO SET Cantidad_Disponible = Cantidad_Disponible + ?, Cantidad_Proyecto = Cantidad_Proyecto - ? WHERE IdArticulo = ?",
+          "UPDATE INVENTARIO SET Cantidad_Total = Cantidad_Total - ?, Cantidad_Proyecto = Cantidad_Proyecto - ?, Cantidad_Disponible = Cantidad_Total - Cantidad_Proyecto WHERE IdArticulo = ?",
           [asignacion.Cantidad, asignacion.Cantidad, asignacion.Id_Articulo]
         );
       }
-
-      // Eliminar registros de ARTICULO_PROYECTO
-      await conn.execute(
-        "DELETE FROM ARTICULO_PROYECTO WHERE Id_Proyecto = ?",
-        [id]
-      );
 
       await conn.commit();
       return true;
@@ -255,7 +249,6 @@ class ProyectoModel {
     }
   }
 
-
   static async cancelarProyecto(id) {
     const conn = await connection.getConnection();
     try {
@@ -266,6 +259,24 @@ class ProyectoModel {
         3,
         id,
       ]);
+
+      // Liberar activos asignados
+      const [asignaciones] = await conn.execute(
+        "SELECT Id_Articulo, Cantidad FROM ARTICULO_PROYECTO WHERE Id_Proyecto = ?",
+        [id]
+      );
+      for (const asignacion of asignaciones) {
+        await conn.execute(
+          "UPDATE INVENTARIO SET Cantidad_Disponible = Cantidad_Disponible + ?, Cantidad_Proyecto = Cantidad_Proyecto - ? WHERE IdArticulo = ?",
+          [asignacion.Cantidad, asignacion.Cantidad, asignacion.Id_Articulo]
+        );
+
+        // Eliminar registros de ARTICULO_PROYECTO
+        await conn.execute(
+          "DELETE FROM ARTICULO_PROYECTO WHERE Id_Proyecto = ?",
+          [id]
+        );
+      }
 
       await conn.commit();
       return true;

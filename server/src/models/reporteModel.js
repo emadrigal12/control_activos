@@ -1,4 +1,4 @@
-const connection = require('../models/database');
+const connection = require("../models/database");
 
 class ReporteModel {
   static async obtenerEstadoProyectosYActivos() {
@@ -23,6 +23,13 @@ class ReporteModel {
     `;
 
     const [rows] = await connection.execute(query);
+    rows.forEach((row) => {
+      row.Fecha_Inicio = row.Fecha_Inicio.toISOString().split("T")[0];
+      row.Fecha_Fin = row.Fecha_Fin.toISOString().split("T")[0];
+      if (row.DetalleActivos === null) {
+        row.DetalleActivos = "Sin activos asignados";
+      }
+    });
     return rows;
   }
 
@@ -44,7 +51,6 @@ class ReporteModel {
       ORDER BY PorcentajeUtilizacion DESC
     `;
 
-    const [rows] = await connection.execute(query);
     return rows;
   }
 }

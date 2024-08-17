@@ -1,4 +1,4 @@
-/*eslint-disable*/
+import React, { useContext } from "react"; /*eslint-disable*/
 import { HamburgerIcon } from "@chakra-ui/icons";
 // chakra imports
 import {
@@ -22,8 +22,8 @@ import logo from "assets/img/logo-no-text.png";
 import { Separator } from "components/Separator/Separator";
 
 import PropTypes from "prop-types";
-import React from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import { AuthContext } from "hooks/AuthContext";
 
 // FUNCTIONS
 
@@ -31,7 +31,7 @@ function Sidebar(props) {
   // to check for active links and opened collapses
   let location = useLocation();
   // this is for the rest of the collapses
-  const [state, setState] = React.useState({});
+  const [state] = React.useState({});
   const mainPanel = React.useRef();
   let variantChange = "0.2s linear";
   // verifies if routeName is the one active (in browser input)
@@ -48,8 +48,14 @@ function Sidebar(props) {
     let inactiveColor = "white";
     let sidebarActiveShadow = "none";
 
+    // Manejo de los permisos de usuario
+    const { userRole } = useContext(AuthContext);
+
     return routes.map((prop, index) => {
       if (prop.hidden) {
+        return null;
+      }
+      if (prop.restricted && userRole === 3) {
         return null;
       }
       if (prop.redirect) {
@@ -205,7 +211,7 @@ function Sidebar(props) {
   var brand = (
     <Box pt={"25px"} mb="12px">
       <Link
-        href={`${process.env.PUBLIC_URL}/#/`}
+        onClick={(e) => e.preventDefault()}
         display="flex"
         lineHeight="100%"
         mb="30px"
@@ -277,8 +283,14 @@ export function SidebarResponsive(props) {
     const activeColor = "white";
     const inactiveColor = "white";
 
+    // Manejo de los permisos de usuario
+    const { userRole } = useContext(AuthContext);
+
     return routes.map((prop, key) => {
       if (prop.hidden) {
+        return null;
+      }
+      if (prop.restricted && userRole === 3) {
         return null;
       }
       if (prop.redirect) {

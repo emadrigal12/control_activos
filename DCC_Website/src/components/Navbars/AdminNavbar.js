@@ -107,13 +107,19 @@ export default function AdminNavbar(props) {
         <Box mb={{ sm: "8px", md: "0px" }}>
           <Breadcrumb>
             <BreadcrumbItem color="#A0AEC0">
-              <BreadcrumbLink href="#" color="#A0AEC0">
+              <BreadcrumbLink
+                onClick={(e) => e.preventDefault()}
+                color="#A0AEC0"
+              >
                 DCC
               </BreadcrumbLink>
             </BreadcrumbItem>
 
             <BreadcrumbItem color={mainText}>
-              <BreadcrumbLink href="#" color={mainText}>
+              <BreadcrumbLink
+                onClick={(e) => e.preventDefault()}
+                color={mainText}
+              >
                 {brandText}
               </BreadcrumbLink>
             </BreadcrumbItem>

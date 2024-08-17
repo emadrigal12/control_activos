@@ -1,19 +1,9 @@
 import React from "react";
-import {
-  Tr,
-  Td,
-  Flex,
-  Text,
-  Progress,
-  Icon,
-  Button,
-  useColorModeValue,
-} from "@chakra-ui/react";
+import { Tr, Td, Flex, Text, Progress, Icon, Button } from "@chakra-ui/react";
 import { FaEllipsisV } from "react-icons/fa";
 
 function DashboardTableRow(props) {
   const { logo, name, status, budget, progression, lastItem } = props;
-  const textColor = useColorModeValue("gray.700", "white");
   return (
     <Tr>
       <Td

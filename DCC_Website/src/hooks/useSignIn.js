@@ -77,7 +77,7 @@ const useSignIn = () => {
           localStorage.setItem("token", result.token);
           const decodedToken = jwtDecode(result.token);
           setIsAuthenticated(true);
-          setUserRole(result.rol_id);
+          setUserRole(decodedToken.rol_id);
 
           history.push("/admin/inicio");
         }

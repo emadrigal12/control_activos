@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // Chakra imports
 import {
@@ -26,6 +26,8 @@ import {
   List,
   ListItem,
   ListIcon,
+  Box,
+  Select,
 } from "@chakra-ui/react";
 
 // Custom components
@@ -46,8 +48,14 @@ import TableActivosProyecto from "components/Tables/TableActivosProyecto";
 import useFetchData from "hooks/useFetchData";
 
 function Tables() {
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedProject, setSelectedProject] = React.useState(null);
   const [showTable, setShowTable] = React.useState(true);
+
+  // Estados para filtros
+  const [usageFilter, setUsageFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
 
   const {
     isOpen: isOpenProyectos,
@@ -83,14 +91,57 @@ function Tables() {
   const handleModificarClick = () => {};
 
   const handleVolver = () => {
+    setSearchTerm("");
+    setUsageFilter("");
+    setStatusFilter("");
+    setTypeFilter("");
     setShowTable(true);
   };
 
   const handleItemClick = (item) => {
+    setSearchTerm("");
+    setUsageFilter("");
+    setStatusFilter("");
+    setTypeFilter("");
     setSelectedProject(item);
     setShowTable(false);
     onCloseProyectos();
   };
+
+  // Filtrar todos los activos según el término de búsqueda y filtros
+  const activosFiltrados = data
+    .filter((activo) =>
+      activo.Descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((activo) =>
+      usageFilter ? Number(activo.En_Uso) === Number(usageFilter) : true
+    )
+    .filter((activo) =>
+      statusFilter ? Number(activo.Depreciado) === Number(statusFilter) : true
+    )
+    .filter((activo) => (typeFilter ? activo.Tipo === typeFilter : true));
+
+  // Filtrar todos los activos según el término de búsqueda y filtros
+  const activosProyectoFiltrados = activosProyectoData
+    .filter((activoProyecto) =>
+      activoProyecto.Descripcion.toLowerCase().includes(
+        searchTerm.toLowerCase()
+      )
+    )
+    .filter((activoProyecto) =>
+      usageFilter ? Number(activoProyecto.En_Uso) === Number(usageFilter) : true
+    )
+    .filter((activoProyecto) =>
+      statusFilter
+        ? Number(activoProyecto.Depreciado) === Number(statusFilter)
+        : true
+    )
+    .filter((activoProyecto) =>
+      typeFilter
+        ? activoProyecto.Tipo.trim().toLowerCase() ===
+          typeFilter.trim().toLowerCase()
+        : true
+    );
 
   return (
     <Flex direction="column" pt={{ base: "120px", md: "75px" }}>
@@ -117,12 +168,16 @@ function Tables() {
                 mt={{ sm: "10px", md: "0px" }}
               >
                 <Text fontSize="md" color="#fff" fontWeight="bold">
-                  Seleccionar Proyecto
+                  Gestionar Proyecto
                 </Text>
               </Button>
             </Grid>
           </CardHeader>
-          <Flex align="center" mb={3}>
+          <Flex
+            align="center"
+            mb={3}
+            flexDirection={{ base: "column", md: "row" }}
+          >
             <InputGroup
               cursor="pointer"
               bg="#28020F"
@@ -158,8 +213,99 @@ function Tables() {
                 color="gray.400"
                 placeholder="Buscar activo..."
                 borderRadius="inherit"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </InputGroup>
+          </Flex>
+          <Flex
+            maxW={{ sm: "25vh", md: "50%", xl: "40%" }}
+            flexDir={{ sm: "column", md: "row" }}
+            justifyContent="space-between"
+            mb={"20px"}
+            gap={"20px"}
+          >
+            <Select
+              color={"gray.400"}
+              borderColor={"gray.400"}
+              placeholder="Uso"
+              size="sm"
+              variant="flushed"
+              onChange={(e) => setUsageFilter(e.target.value)}
+              value={usageFilter}
+            >
+              <option style={{ color: "black" }} value="">
+                Todos
+              </option>
+              <option style={{ color: "black" }} value="0">
+                Disponible
+              </option>
+              <option style={{ color: "black" }} value="1">
+                Ocupado
+              </option>
+            </Select>
+            <Select
+              color={"gray.400"}
+              borderColor={"gray.400"}
+              placeholder="Estado"
+              size="sm"
+              variant="flushed"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option style={{ color: "black" }} value="">
+                Todos
+              </option>
+              <option style={{ color: "black" }} value="1">
+                Depreciado
+              </option>
+              <option style={{ color: "black" }} value="0">
+                Sin Depreciar
+              </option>
+            </Select>
+            <Select
+              color={"gray.400"}
+              borderColor={"gray.400"}
+              placeholder="Tipo"
+              size="sm"
+              variant="flushed"
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+            >
+              <option style={{ color: "black" }} value="">
+                Todos
+              </option>
+              <option style={{ color: "black" }} value="Por Definir">
+                Por Definir
+              </option>
+              <option style={{ color: "black" }} value="Mobiliario y Equipos">
+                Mobiliario y Equipos
+              </option>
+              <option
+                style={{ color: "black" }}
+                value="Tecnología y Electrónica"
+              >
+                Tecnología y Electrónica
+              </option>
+              <option
+                style={{ color: "black" }}
+                value="Herramientas y Utensilios"
+              >
+                Herramientas y Utensilios
+              </option>
+              <option style={{ color: "black" }} value="Suministros de Oficina">
+                Suministros de Oficina
+              </option>
+              <option style={{ color: "black" }} value="Equipos de Seguridad">
+                Equipos de Seguridad
+              </option>
+              <option
+                style={{ color: "black" }}
+                value="Materiales de Construcción"
+              >
+                Materiales de Construcción
+              </option>
+            </Select>
           </Flex>
           <CardBody overflow="auto" maxHeight="700px">
             <Table variant="simple" color="#fff">
@@ -211,7 +357,7 @@ function Tables() {
                 </Tr>
               </Thead>
               <Tbody>
-                {data.map((row, index, arr) => {
+                {activosFiltrados.map((row, index, arr) => {
                   return (
                     <TablesTableRow
                       key={row?.Id}
@@ -220,7 +366,11 @@ function Tables() {
                       imagen={activoIco}
                       Ubicacion={row?.Ubicacion}
                       En_Uso={row.En_Uso === 1 ? "Ocupado" : "Disponible"}
-                      Cantidad_Total={row?.Cantidad_Total}
+                      Cantidad_Total={[
+                        row?.Cantidad_Disponible,
+                        " / ",
+                        row?.Cantidad_Total,
+                      ]}
                       Depreciado={
                         row?.Depreciado === 1 ? "Depreciado" : "Sin Depreciar"
                       }
@@ -269,21 +419,6 @@ function Tables() {
             </Flex>
           </CardHeader>
           <Flex align="center" mb={3}>
-            <Button
-              onClick={handleVolver}
-              size="md"
-              borderRadius="12px"
-              bg="brand.300"
-              _hover={{ opacity: "0.8" }}
-              _active={{ opacity: "0.9" }}
-              mt={{ sm: "10px", md: "0px" }}
-            >
-              <Text fontSize="md" color="white" fontWeight="bold">
-                Asignar Activo
-              </Text>
-            </Button>
-          </Flex>
-          <Flex align="center" mb={3}>
             <InputGroup
               cursor="pointer"
               bg="#28020F"
@@ -319,8 +454,99 @@ function Tables() {
                 color="gray.400"
                 placeholder="Buscar activo..."
                 borderRadius="inherit"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </InputGroup>
+          </Flex>
+          <Flex
+            maxW={{ sm: "25vh", md: "50%", xl: "40%" }}
+            flexDir={{ sm: "column", md: "row" }}
+            justifyContent="space-between"
+            mb={"20px"}
+            gap={"20px"}
+          >
+            <Select
+              color={"gray.400"}
+              borderColor={"gray.400"}
+              placeholder="Uso"
+              size="sm"
+              variant="flushed"
+              onChange={(e) => setUsageFilter(e.target.value)}
+              value={usageFilter}
+            >
+              <option style={{ color: "black" }} value="">
+                Todos
+              </option>
+              <option style={{ color: "black" }} value="0">
+                Disponible
+              </option>
+              <option style={{ color: "black" }} value="1">
+                Ocupado
+              </option>
+            </Select>
+            <Select
+              color={"gray.400"}
+              borderColor={"gray.400"}
+              placeholder="Estado"
+              size="sm"
+              variant="flushed"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option style={{ color: "black" }} value="">
+                Todos
+              </option>
+              <option style={{ color: "black" }} value="1">
+                Depreciado
+              </option>
+              <option style={{ color: "black" }} value="0">
+                Sin Depreciar
+              </option>
+            </Select>
+            <Select
+              color={"gray.400"}
+              borderColor={"gray.400"}
+              placeholder="Tipo"
+              size="sm"
+              variant="flushed"
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+            >
+              <option style={{ color: "black" }} value="">
+                Todos
+              </option>
+              <option style={{ color: "black" }} value="Por Definir">
+                Por Definir
+              </option>
+              <option style={{ color: "black" }} value="Mobiliario y Equipos">
+                Mobiliario y Equipos
+              </option>
+              <option
+                style={{ color: "black" }}
+                value="Tecnología y Electrónica"
+              >
+                Tecnología y Electrónica
+              </option>
+              <option
+                style={{ color: "black" }}
+                value="Herramientas y Utensilios"
+              >
+                Herramientas y Utensilios
+              </option>
+              <option style={{ color: "black" }} value="Suministros de Oficina">
+                Suministros de Oficina
+              </option>
+              <option style={{ color: "black" }} value="Equipos de Seguridad">
+                Equipos de Seguridad
+              </option>
+              <option
+                style={{ color: "black" }}
+                value="Materiales de Construcción"
+              >
+                Materiales de Construcción
+              </option>
+            </Select>
           </Flex>
           <CardBody overflow="auto" maxHeight="700px">
             <Table variant="simple" color="#fff">
@@ -371,7 +597,7 @@ function Tables() {
                 </Tr>
               </Thead>
               <Tbody>
-                {activosProyectoData.map((row, index, arr) => {
+                {activosProyectoFiltrados.map((row, index, arr) => {
                   return (
                     <TableActivosProyecto
                       key={row?.Id}
@@ -411,23 +637,27 @@ function Tables() {
           <ModalHeader>Proyectos Disponibles</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <List spacing={3}>
-              {dataProyectos.map((project) => (
-                <ListItem
-                  key={project.id}
-                  onClick={() => handleItemClick(project)}
-                  cursor="pointer"
-                  textColor="white"
-                  bg="blackAlpha.500"
-                  p={5}
-                  borderRadius="md"
-                  _hover={{ bg: "blackAlpha.600" }}
-                >
-                  <ListIcon as={FaProjectDiagram} color="brand.300" />
-                  {project.Descripcion}
-                </ListItem>
-              ))}
-            </List>
+            <Box maxH={"60vh"} overflow="auto" p={"5px"}>
+              <List spacing={3}>
+                {dataProyectos.map((project) =>
+                  project.Estado === 1 ? (
+                    <ListItem
+                      key={project.id}
+                      onClick={() => handleItemClick(project)}
+                      cursor="pointer"
+                      textColor="white"
+                      bg="blackAlpha.500"
+                      p={5}
+                      borderRadius="md"
+                      _hover={{ bg: "blackAlpha.600" }}
+                    >
+                      <ListIcon as={FaProjectDiagram} color="brand.300" />
+                      {project.Descripcion}
+                    </ListItem>
+                  ) : null
+                )}
+              </List>
+            </Box>
           </ModalBody>
           <ModalFooter></ModalFooter>
         </ModalContent>

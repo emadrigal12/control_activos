@@ -26,13 +26,16 @@ import {
   AlertDialogFooter,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "hooks/AuthContext";
+
+// Icons
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 
 // Hooks
 import useFetchData from "hooks/useFetchData";
 import useDeleteData from "hooks/useDeleteData";
 import { usePost } from "hooks/usePostData";
-import useUserData from "hooks/useUserData";
 
 function TablesTableRow(props) {
   const {
@@ -55,8 +58,10 @@ function TablesTableRow(props) {
   } = props;
   const colorStatus = useColorModeValue("white", "gray.400");
 
-  // USO DEL HOOK PARA OBTENER LOS DATOS DEL USUARIO
-  const { userData } = useUserData();
+  // Manejo de los permisos de usuario
+  const { userRole } = useContext(AuthContext);
+  const allowedRoles = [1, 2];
+  const isRoleAllowed = allowedRoles.includes(userRole);
 
   // USO DEL HOOK PARA OBTENER LOS DATOS DE UN ARTÍCULO
   const { data } = useFetchData(`http://localhost:4000/articulos/${Id}`);
@@ -77,11 +82,12 @@ function TablesTableRow(props) {
   const [formData, setFormData] = useState({
     cantidad: "",
   });
+
   // Se actualiza el estado del formulario con los datos del artículo
   useEffect(() => {
     if (data) {
       setFormData({
-        Cantidad: props.Cantidad,
+        cantidad: props.Cantidad,
       });
     }
   }, [data]);
@@ -98,7 +104,7 @@ function TablesTableRow(props) {
   // Función para manejar la actualización del artículo
   const handleSave = async () => {
     const dataToSend = {
-      cantidad: formData.Cantidad,
+      cantidad: formData.cantidad,
     };
 
     const success = await postData(dataToSend);
@@ -242,26 +248,30 @@ function TablesTableRow(props) {
             {Cantidad}
           </Text>
         </Td>
-        <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
-          <Button
-            p="0px"
-            bg="transparent"
-            variant="no-hover"
-            onClick={() => {
-              onModificarClick(props.Id, props.Cantidad);
-              onOpen();
-            }}
-          >
-            <Text
-              fontSize="sm"
-              color="gray.300"
-              fontWeight="bold"
-              cursor="pointer"
+        {isRoleAllowed && (
+          <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
+            <Button
+              rightIcon={<ArrowForwardIcon />}
+              size="sm"
+              bg="brand.400"
+              _hover={{ opacity: "0.8" }}
+              _active={{ opacity: "0.9" }}
+              onClick={() => {
+                onModificarClick(props.Id, props.cantidad);
+                onOpen();
+              }}
             >
-              Modificar
-            </Text>
-          </Button>
-        </Td>
+              <Text
+                fontSize="sm"
+                color="gray.200"
+                fontWeight="bold"
+                cursor="pointer"
+              >
+                Modificar
+              </Text>
+            </Button>
+          </Td>
+        )}
       </Tr>
       {/* Modal */}
       <Modal
@@ -281,8 +291,9 @@ function TablesTableRow(props) {
             <FormControl>
               <FormLabel>Ingrese la nueva cantidad</FormLabel>
               <Input
-                name="Cantidad"
-                value={formData.Cantidad}
+                name="cantidad"
+                type="number"
+                value={formData.cantidad}
                 onChange={handleInputChange}
               />
             </FormControl>

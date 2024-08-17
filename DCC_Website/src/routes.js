@@ -11,7 +11,6 @@ import {
   StatsIcon,
   PersonIcon,
   DocumentIcon,
-  HelpIcon,
   RocketIcon,
 } from "components/Icons/Icons";
 
@@ -33,9 +32,10 @@ var dashRoutes = [
   {
     path: "/ingresar-activos",
     name: "Ingresar Activos",
-    icon: <DocumentIcon color="inherit" />,
+    icon: <RocketIcon color="inherit" />,
     component: IngresarActivos,
     layout: "/admin",
+    restricted: true,
   },
   {
     path: "/reportes",

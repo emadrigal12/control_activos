@@ -31,12 +31,15 @@ import {
   List,
   ListItem,
   ListIcon,
+  Box,
 } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "hooks/AuthContext";
 
 // Icons
-import { MdOutlineReadMore } from "react-icons/md";
+import { FaPlus } from "react-icons/fa6";
 import { FaProjectDiagram } from "react-icons/fa";
+import { ArrowForwardIcon } from "@chakra-ui/icons";
 
 // Hooks
 import useFetchData from "hooks/useFetchData";
@@ -66,6 +69,11 @@ function TablesTableRow(props) {
     onViewMoreClick,
   } = props;
   const colorStatus = useColorModeValue("white", "gray.400");
+
+  // Manejo de los permisos de usuario
+  const { userRole } = useContext(AuthContext);
+  const allowedRoles = [1, 2];
+  const isRoleAllowed = allowedRoles.includes(userRole);
 
   // USO DEL HOOK PARA OBTENER LOS DATOS DEL USUARIO
   const { userData } = useUserData();
@@ -117,6 +125,7 @@ function TablesTableRow(props) {
     En_Uso: false,
     Depreciado: false,
   });
+
   // Se actualiza el estado del formulario con los datos del artículo
   useEffect(() => {
     if (data) {
@@ -128,6 +137,8 @@ function TablesTableRow(props) {
         Modelo: data.Modelo,
         Descripcion: data.Descripcion,
         Cantidad_Total: data.Cantidad_Total,
+        Cantidad_Disponible: data.Cantidad_Disponible,
+        Cantidad_Proyecto: data.Cantidad_Proyecto,
         En_Uso: data.En_Uso === 1,
         Depreciado: data.Depreciado === 1,
       });
@@ -160,12 +171,32 @@ function TablesTableRow(props) {
       Depreciado: formData.Depreciado ? 1 : 0,
       Id_Usuario: userData.Id_Usuario,
     };
+
+    if (
+      dataToSend.Ubicacion === "" ||
+      dataToSend.Activo_Num === "" ||
+      dataToSend.Tipo === "" ||
+      dataToSend.Marca === "" ||
+      dataToSend.Modelo === "" ||
+      dataToSend.Descripcion === "" ||
+      dataToSend.Cantidad_Total === ""
+    ) {
+      toast({
+        title: "Error al actualizar",
+        description: "Por favor, llena todos los campos.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     const success = await putData(dataToSend);
     if (success) {
       props.onDeleteSuccess(Id);
       toast({
-        title: "Elemento actualizado",
-        description: `El Articulo ha sido actualizado correctamente.`,
+        title: "Activo actualizado",
+        description: `El activo ha sido actualizado correctamente.`,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -223,16 +254,17 @@ function TablesTableRow(props) {
         title: "Elemento actualizado",
         description: `El Artículo ha sido actualizado correctamente.`,
         status: "success",
-        duration: 5000,
+        duration: 4000,
         isClosable: true,
       });
       onClose(); // Cierra el modal
     } else {
       toast({
         title: "Error al asignar",
-        description: "El activo ya ha sido asignado a este proyecto.",
+        description:
+          "El acivo ya se encuentra asignado a este proyecto o no hay suficientes activos disponibles.",
         status: "error",
-        duration: 5000,
+        duration: 4000,
         isClosable: true,
       });
     }
@@ -244,8 +276,28 @@ function TablesTableRow(props) {
     onOpenAsignar();
   };
 
+  const handleVerMas = () => {
+    if (userRole === 3) {
+      onOpenActivo();
+    } else {
+      onOpen();
+    }
+  };
+
   // Modals
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const {
+    isOpen: isOpenActivo,
+    onOpen: onOpenActivo,
+    onClose: onCloseActivo,
+  } = useDisclosure();
+
+  const handleCloseActivo = () => {
+    onClose();
+    data && setFormData(data);
+  };
+
   const {
     isOpen: isOpenAlert,
     onOpen: onOpenAlert,
@@ -350,21 +402,15 @@ function TablesTableRow(props) {
         </Td>
         <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
           <Button
-            p="0px"
-            bg="transparent"
-            variant="no-hover"
-            sx={{
-              display: "inline-flex",
-              alignItems: "center",
-              _hover: {
-                ".icon": {
-                  transform: "scale(1.1)",
-                },
-              },
-            }}
+            size="sm"
+            rightIcon={<FaPlus />}
+            colorScheme="orange"
+            variant="outline"
+            _hover={{ bg: "#353535" }}
+            _active={{ bg: "#424242" }}
             onClick={() => {
               onViewMoreClick(props.Id); // Aquí se pasa el ID al hacer click
-              onOpen();
+              handleVerMas();
             }}
           >
             <Text
@@ -376,36 +422,30 @@ function TablesTableRow(props) {
               alignItems="center"
             >
               Ver Más
-              <MdOutlineReadMore
-                className="icon" // Añade esta clase para aplicar el estilo de hover
-                size="30px"
-                style={{
-                  marginLeft: "2px",
-                  color: "orange",
-                  transition: "transform 0.2s ease-in-out", // Transición suave aplicada al ícono
-                }}
-              />
             </Text>
           </Button>
         </Td>
-        <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
-          <Button
-            p="5px"
-            bg="brand.200"
-            _hover={{ opacity: "0.8" }}
-            _active={{ opacity: "0.9" }}
-            onClick={onOpenProyectos}
-          >
-            <Text
-              fontSize="sm"
-              color="gray.200"
-              fontWeight="bold"
-              cursor="pointer"
+        {isRoleAllowed && (
+          <Td border={lastItem ? "none" : null} borderBottomColor="#56577A">
+            <Button
+              rightIcon={<ArrowForwardIcon />}
+              size="sm"
+              bg="brand.400"
+              _hover={{ opacity: "0.8" }}
+              _active={{ opacity: "0.9" }}
+              onClick={onOpenProyectos}
             >
-              Asignar
-            </Text>
-          </Button>
-        </Td>
+              <Text
+                fontSize="sm"
+                color="gray.200"
+                fontWeight="bold"
+                cursor="pointer"
+              >
+                Asignar
+              </Text>
+            </Button>
+          </Td>
+        )}
       </Tr>
       {/* Modal para mostrar los proyectos disponibles */}
       <Modal isOpen={isOpenProyectos} onClose={onCloseProyectos}>
@@ -417,23 +457,27 @@ function TablesTableRow(props) {
           <ModalHeader>Seleccionar Proyecto</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <List spacing={3}>
-              {dataProyectos.map((project) => (
-                <ListItem
-                  key={project.id}
-                  onClick={() => handleItemClick(project)}
-                  cursor="pointer"
-                  textColor="white"
-                  bg="blackAlpha.500"
-                  p={5}
-                  borderRadius="md"
-                  _hover={{ bg: "blackAlpha.600" }}
-                >
-                  <ListIcon as={FaProjectDiagram} color="brand.300" />
-                  {project.Descripcion}
-                </ListItem>
-              ))}
-            </List>
+            <Box maxH={"60vh"} overflow="auto" p={"5px"}>
+              <List spacing={3}>
+                {dataProyectos.map((project) =>
+                  project.Estado === 1 ? (
+                    <ListItem
+                      key={project.id}
+                      onClick={() => handleItemClick(project)}
+                      cursor="pointer"
+                      textColor="white"
+                      bg="blackAlpha.500"
+                      p={5}
+                      borderRadius="md"
+                      _hover={{ bg: "blackAlpha.600" }}
+                    >
+                      <ListIcon as={FaProjectDiagram} color="brand.300" />
+                      {project.Descripcion}
+                    </ListItem>
+                  ) : null
+                )}
+              </List>
+            </Box>
           </ModalBody>
           <ModalFooter></ModalFooter>
         </ModalContent>
@@ -455,7 +499,11 @@ function TablesTableRow(props) {
           <ModalBody pb={6}>
             <FormControl>
               <FormLabel>Ingrese la cantidad a asignar</FormLabel>
-              <Input name="Cantidad" onChange={handleInputCantidadChange} />
+              <Input
+                type="number"
+                name="Cantidad"
+                onChange={handleInputCantidadChange}
+              />
             </FormControl>
           </ModalBody>
 
@@ -466,23 +514,23 @@ function TablesTableRow(props) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {/* Modal Para Mostrar Info del Activo*/}
+      {/* Modal Para Mostrar Info del Activo y Modificarlo*/}
       <Modal
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}
         isOpen={isOpen}
-        onClose={onClose}
+        onClose={handleCloseActivo}
       >
         <ModalOverlay />
         <ModalContent
           bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
           color="white"
         >
-          <ModalHeader>Información de Activo</ModalHeader>
+          <ModalHeader>Información de Activo / Modificar</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Ubicación</FormLabel>
+              <FormLabel color={"orange.300"}>Ubicación</FormLabel>
               <Input
                 name="Ubicacion"
                 value={formData.Ubicacion}
@@ -491,24 +539,22 @@ function TablesTableRow(props) {
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Activo #</FormLabel>
+              <FormLabel color={"orange.300"}>Activo #</FormLabel>
               <Input
                 name="Activo_Num"
+                type="number"
                 value={formData.Activo_Num}
                 onChange={handleInputChange}
               />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Tipo</FormLabel>
+              <FormLabel color={"orange.300"}>Tipo</FormLabel>
               <Select
                 name="Tipo"
                 value={formData.Tipo}
                 onChange={handleInputChange}
               >
-                <option style={{ color: "black" }} value={formData.Tipo}>
-                  {formData.Tipo}
-                </option>
                 <option
                   style={{ color: "black" }}
                   value=" Mobiliario y Equipos"
@@ -546,7 +592,7 @@ function TablesTableRow(props) {
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Marca</FormLabel>
+              <FormLabel color={"orange.300"}>Marca</FormLabel>
               <Input
                 name="Marca"
                 value={formData.Marca}
@@ -555,7 +601,7 @@ function TablesTableRow(props) {
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Modelo</FormLabel>
+              <FormLabel color={"orange.300"}>Modelo</FormLabel>
               <Input
                 name="Modelo"
                 value={formData.Modelo}
@@ -564,7 +610,7 @@ function TablesTableRow(props) {
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Descripción</FormLabel>
+              <FormLabel color={"orange.300"}>Descripción</FormLabel>
               <Input
                 name="Descripcion"
                 value={formData.Descripcion}
@@ -573,16 +619,17 @@ function TablesTableRow(props) {
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Cantidad</FormLabel>
+              <FormLabel color={"orange.300"}>Cantidad Total</FormLabel>
               <Input
                 name="Cantidad_Total"
+                type="number"
                 value={formData.Cantidad_Total}
                 onChange={handleInputChange}
               />
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Estado</FormLabel>
+              <FormLabel color={"orange.300"}>Estado</FormLabel>
               <Stack spacing={5} direction="row">
                 <Checkbox
                   name="En_Uso"
@@ -605,13 +652,185 @@ function TablesTableRow(props) {
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="brand" mr={3} onClick={handleSave}>
+            <Button colorScheme="orange" mr={3} onClick={handleSave}>
               Guardar
             </Button>
             <Button onClick={onOpenAlert} variant="ghost" colorScheme="red">
               Eliminar
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+      {/* Modal Para Mostrar Solo Info del Activo*/}
+      <Modal
+        initialFocusRef={initialRef}
+        finalFocusRef={finalRef}
+        isOpen={isOpenActivo}
+        onClose={onCloseActivo}
+      >
+        <ModalOverlay />
+        <ModalContent
+          bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
+          color="white"
+        >
+          <ModalHeader fontSize={"28px"}>Información de Activo</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <Box mb={"5px"}>
+              <text
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                Ubicación:{" "}
+                <span style={{ color: "white", fontWeight: "normal" }}>
+                  {formData.Ubicacion}
+                </span>
+              </text>
+            </Box>
+            <Box mb={"5px"}>
+              <text
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                Activo #:{" "}
+                <span style={{ color: "white", fontWeight: "normal" }}>
+                  {formData.Activo_Num}
+                </span>
+              </text>
+            </Box>
+            <Box mb={"5px"}>
+              <text
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                Tipo:{" "}
+                <span style={{ color: "white", fontWeight: "normal" }}>
+                  {formData.Tipo}
+                </span>
+              </text>
+            </Box>
+            <Box mb={"5px"}>
+              <text
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                Marca:{" "}
+                <span style={{ color: "white", fontWeight: "normal" }}>
+                  {formData.Marca}
+                </span>
+              </text>
+            </Box>
+            <Box mb={"5px"}>
+              <text
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                Modelo:{" "}
+                <span style={{ color: "white", fontWeight: "normal" }}>
+                  {formData.Modelo}
+                </span>
+              </text>
+            </Box>
+            <Box mb={"5px"}>
+              <text
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                Descripción:{" "}
+                <span style={{ color: "white", fontWeight: "normal" }}>
+                  {formData.Descripcion}
+                </span>
+              </text>
+            </Box>
+            <Box mb={"5px"}>
+              <text
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                Cantidad Total:{" "}
+                <span style={{ color: "white", fontWeight: "normal" }}>
+                  {formData.Cantidad_Total}
+                </span>
+              </text>
+            </Box>
+            <Box mb={"5px"}>
+              <text
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                Cantidad Disponible:{" "}
+                <span style={{ color: "white", fontWeight: "normal" }}>
+                  {formData.Cantidad_Disponible}
+                </span>
+              </text>
+            </Box>
+            <Box mb={"5px"}>
+              <text
+                style={{
+                  color: "orange",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                }}
+              >
+                Cantidad en Proyectos:{" "}
+                <span style={{ color: "white", fontWeight: "normal" }}>
+                  {formData.Cantidad_Proyecto}
+                </span>
+              </text>
+            </Box>
+
+            <FormControl>
+              <FormLabel fontSize={"20px"} color={"orange"}>
+                Estado:
+              </FormLabel>
+              <Stack spacing={5} direction="row">
+                <Checkbox
+                  size="lg"
+                  name="En_Uso"
+                  colorScheme="orange"
+                  pointerEvents="none"
+                  isChecked={formData.En_Uso}
+                >
+                  En Uso
+                </Checkbox>
+                <Checkbox
+                  size="lg"
+                  name="Depreciado"
+                  colorScheme="orange"
+                  pointerEvents="none"
+                  isChecked={formData.Depreciado}
+                >
+                  Depreciado
+                </Checkbox>
+              </Stack>
+            </FormControl>
+          </ModalBody>
+
+          <ModalFooter></ModalFooter>
         </ModalContent>
       </Modal>
 

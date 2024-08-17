@@ -131,6 +131,12 @@ router.put(
   verificarPermiso("Finalizar_Proyecto"),
   proyectoController.finalizarProyecto
 );
+router.put(
+  "/proyectos/:id/cancelar",
+  authMiddleware,
+  verificarPermiso("Cancelar_Proyecto"),
+  proyectoController.cancelarProyecto
+);
 
 //Reportes
 router.get(
