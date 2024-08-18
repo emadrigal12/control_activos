@@ -71,8 +71,6 @@ const useSignIn = () => {
         if (result.message && result.message === "Invalid user") {
           setGeneralError("Correo o contraseña incorrectos");
         } else {
-          console.log("Inicio de sesión exitoso");
-
           // Almacenar el token en localStorage
           localStorage.setItem("token", result.token);
           const decodedToken = jwtDecode(result.token);
@@ -82,7 +80,6 @@ const useSignIn = () => {
           history.push("/admin/inicio");
         }
       } catch (error) {
-        console.error("Error en la solicitud de inicio de sesión:", error);
         setGeneralError("Error en la solicitud de inicio de sesión");
       }
     }

@@ -104,13 +104,13 @@ router.put(
 router.post(
   "/proyectos/asignar-activo",
   authMiddleware,
-  //verificarPermiso("Gestionar_Proyectos"), Por el momento no permite asignar activos a pesar de tener el permiso
+  verificarPermiso("Asignar_Activos_Proyecto"),
   proyectoController.asignarActivoAProyecto
 );
 router.delete(
   "/proyectos/eliminar-activo/:proyectoId/:articuloId",
   authMiddleware,
-  verificarPermiso("Eliminar_Proyecto"),
+  verificarPermiso("Eliminar_Activos_Proyecto"),
   proyectoController.eliminarActivoDeProyecto
 );
 router.post(

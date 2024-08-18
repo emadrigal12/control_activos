@@ -112,7 +112,7 @@ function TablesTableRow(props) {
       props.onDeleteSuccess(Id);
       toast({
         title: "Elemento actualizado",
-        description: `El Artículo ha sido actualizado correctamente.`,
+        description: `Los datos han sido actualizados correctamente.`,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -122,7 +122,7 @@ function TablesTableRow(props) {
       toast({
         title: "Error al actualizar",
         description:
-          "Hubo un problema al intentar actualizar el artículo. Por favor, intenta de nuevo más tarde.",
+          "Hubo un problema al intentar actualizar los datos. Por favor, intenta de nuevo más tarde.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -289,7 +289,9 @@ function TablesTableRow(props) {
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Ingrese la nueva cantidad</FormLabel>
+              <FormLabel color={"brand.100"}>
+                Ingrese la nueva cantidad
+              </FormLabel>
               <Input
                 name="cantidad"
                 type="number"
@@ -301,10 +303,10 @@ function TablesTableRow(props) {
 
           <ModalFooter>
             <Button colorScheme="brand" mr={3} onClick={handleSave}>
-              Guardar
+              Actualizar
             </Button>
             <Button onClick={onOpenAlert} variant="ghost" colorScheme="red">
-              Eliminar
+              Remover de Proyecto
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -321,13 +323,14 @@ function TablesTableRow(props) {
             color="white"
           >
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Eliminar Activo del Proyecto
+              Remover Activo del Proyecto
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Estás seguro que deseas eliminar este activo?
+              Estás seguro que deseas remover este activo?
               <span style={{ fontSize: "13px", color: "gray" }}>
-                <br /> (Esta acción no eliminará el activo de la base de datos)
+                <br /> (La cantidad del activo en inventario se restablecerá
+                automáticamente)
               </span>
             </AlertDialogBody>
 
@@ -350,7 +353,7 @@ function TablesTableRow(props) {
                 }}
                 ml={3}
               >
-                Eliminar
+                Remover
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

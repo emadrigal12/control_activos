@@ -634,7 +634,7 @@ function Tables() {
           bg="linear-gradient(90deg, rgba(46,46,46) 42%, rgba(47,47,47) 71%)"
           color="white"
         >
-          <ModalHeader>Proyectos Disponibles</ModalHeader>
+          <ModalHeader>Proyectos Activos</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Box maxH={"60vh"} overflow="auto" p={"5px"}>

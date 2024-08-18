@@ -43,7 +43,7 @@ export default function Configurator(props) {
 
   // Manejo de los permisos de usuario
   const { userRole } = useContext(AuthContext);
-  const allowedRoles = [1, 2];
+  const allowedRoles = [1];
   const isRoleAllowed = allowedRoles.includes(userRole);
 
   const { secondary, isOpen, onClose, fixed, ...rest } = props;

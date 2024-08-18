@@ -104,13 +104,10 @@ function TablesTableRow(props) {
   // Estado para la cantidad de activos a asignar
   const [cantidad, setCantidad] = useState(0);
 
-  // Función para manejar los cambios en los inputs de la cantidad de activos
+  // Función para manejar los cambios en el input de cantidad
   const handleInputCantidadChange = (e) => {
-    const { name, value } = e.target;
-    setCantidad((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const value = parseInt(e.target.value, 10); // Convertir el valor a número
+    setCantidad(value);
   };
 
   // Se inicializa el estado del formulario
@@ -244,7 +241,7 @@ function TablesTableRow(props) {
     const dataToSend = {
       proyectoId: selectedProject.Id,
       articuloId: props.Id,
-      cantidad: cantidad.Cantidad,
+      cantidad: cantidad,
     };
 
     const success = await postData(dataToSend);
@@ -252,7 +249,7 @@ function TablesTableRow(props) {
       props.onDeleteSuccess(Id);
       toast({
         title: "Elemento actualizado",
-        description: `El Artículo ha sido actualizado correctamente.`,
+        description: `Los datos han sido actualizados correctamente.`,
         status: "success",
         duration: 4000,
         isClosable: true,
@@ -272,6 +269,7 @@ function TablesTableRow(props) {
 
   const handleItemClick = (item) => {
     setSelectedProject(item);
+    setCantidad(0);
     onCloseProyectos();
     onOpenAsignar();
   };
@@ -502,6 +500,7 @@ function TablesTableRow(props) {
               <Input
                 type="number"
                 name="Cantidad"
+                value={cantidad}
                 onChange={handleInputCantidadChange}
               />
             </FormControl>
