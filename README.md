@@ -68,3 +68,38 @@ This project aims to develop a raw material inventory system to optimize invento
 ## Cloud Hosting
 
 - **AWS**: The SQL Server database is hosted on Amazon Web Services (AWS).
+
+Certainly! Here's the workflow translated into English:
+
+# Workflow
+
+1. **User Interaction:**
+   - The user logs into the inventory page via an interface built with React and ChakraUI.
+   - They navigate through the page to view the list of raw materials, search for specific materials, or access forms to add or update information.
+
+2. **Request Generation:**
+   - When the user performs an action, such as adding a new material or updating a quantity, the React frontend generates an API request.
+   - This request is managed by JavaScript, which uses `fetch` or a library like `axios` to send the information to the server.
+
+3. **Backend Handling:**
+   - The frontend request is received by the Node.js backend.
+   - Node.js processes the request, performs necessary validations, and determines the operation to be executed (e.g., insert a new record, update an existing record, or delete one).
+
+4. **Database Interaction:**
+   - Node.js communicates with the MySQL database to perform the requested operation.
+   - It executes SQL queries to add, update, or delete records in the database based on the data sent from the frontend.
+
+5. **Database Update:**
+   - The MySQL database updates its records according to the request.
+   - AWS ensures that the database remains available and secure throughout this process.
+
+6. **Response to Frontend:**
+   - Once the operation is complete, Node.js sends a response back to the frontend.
+   - This response may include updated data, confirmation of the operation, or error messages.
+
+7. **User Interface Update:**
+   - React receives the response from the backend and updates the user interface based on the new data.
+   - The page refreshes to reflect the changes made in the database, such as adding a new material or updating quantities.
+
+8. **Error Handling:**
+   - If an error occurs at any point in the process (e.g., a failed request or a database issue), the frontend displays an appropriate error message to inform the user.
