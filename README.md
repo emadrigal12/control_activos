@@ -68,3 +68,21 @@ This project aims to develop a raw material inventory system to optimize invento
 ## Cloud Hosting
 
 - **AWS**: The SQL Server database is hosted on Amazon Web Services (AWS).
+
+## Preview
+
+![Imagen de WhatsApp 2024-07-18 a las 07 10 49_b05a82f9](https://github.com/user-attachments/assets/1e7b7860-42ae-4734-9152-95b67868681e)
+
+![Imagen de WhatsApp 2024-07-18 a las 07 11 05_f9afc6c2](https://github.com/user-attachments/assets/be419817-c0ff-41c9-94f6-c681c777cde5)
+
+![Imagen de WhatsApp 2024-07-18 a las 07 11 17_6e3d500a](https://github.com/user-attachments/assets/d90d3770-e823-4535-86cf-298fe118ba29)
+
+![Imagen de WhatsApp 2024-07-18 a las 07 11 24_a9e6b6df](https://github.com/user-attachments/assets/1a7e8363-cd4e-41e4-b679-974ee4857a03)
+
+![Imagen de WhatsApp 2024-07-18 a las 07 11 30_f0636f12](https://github.com/user-attachments/assets/8bcc3ad7-0de3-46dc-a3b3-d84c7a8359fd)
+
+![Imagen de WhatsApp 2024-07-18 a las 07 11 42_242fdaf0](https://github.com/user-attachments/assets/84831d75-cb8c-4bb1-b3bc-5925d7358648)
+
+![Imagen de WhatsApp 2024-07-18 a las 07 13 13_30728535](https://github.com/user-attachments/assets/aa2cde12-740f-4903-b329-f4d8d2ab960d)
+
+
