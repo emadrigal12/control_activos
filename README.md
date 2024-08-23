@@ -69,8 +69,6 @@ This project aims to develop a raw material inventory system to optimize invento
 
 - **AWS**: The SQL Server database is hosted on Amazon Web Services (AWS).
 
-Certainly! Here's the workflow translated into English:
-
 # Workflow
 
 1. **User Interaction:**
