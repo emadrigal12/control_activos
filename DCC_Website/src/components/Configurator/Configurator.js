@@ -170,7 +170,8 @@ export default function Configurator(props) {
   const settingsRef = React.useRef();
 
   const handleCloseCrearUsuario = () => {
-    resetForm(); // Resetear el formulario
+    resetForm();
+    onCloseCrearUsuario();
   };
 
   // Modals
